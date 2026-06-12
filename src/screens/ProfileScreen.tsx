@@ -59,7 +59,6 @@ export default function ProfileScreen() {
         <div className="flex-1 min-w-0 pt-1">
           <p className="text-xl font-extrabold text-primary">{mockProfile.displayName}</p>
           <p className="text-sm font-bold text-primary mt-0.5">{mockPrimaryArchetype.name_ko}</p>
-
           {/* 나다움 — prominent */}
           <div className="mt-2 flex items-baseline gap-1.5">
             <p className="text-3xl font-black text-grad-cta leading-none">92%</p>
@@ -68,7 +67,6 @@ export default function ProfileScreen() {
               <p className="text-[10px] text-secondary">나답게 성장 중 ✨</p>
             </div>
           </div>
-
           <div className="flex items-center gap-2 mt-2">
             <Badge tone="pink">Lv.{mockProfile.level}</Badge>
             <span className="text-xs text-secondary">1,250 / 2,000 EXP</span>
@@ -89,7 +87,7 @@ export default function ProfileScreen() {
         ))}
       </div>
 
-      {/* MING — expandable, warmer language */}
+      {/* MING commentary — expandable, warmer language */}
       <div className="mx-5 mb-4 rounded-xl bg-card border border-purple/20 p-3">
         <button
           onClick={() => setMingExpanded((v) => !v)}
