@@ -58,13 +58,13 @@ export default function RelationshipDetailScreen() {
         <div className="w-9" />
       </div>
 
-      {/* emotional hero — primary view */}
+      {/* emotional hero */}
       <div
         className="mx-5 mb-4 rounded-xl overflow-hidden border border-border"
         style={{ background: "linear-gradient(160deg, #1A1235 0%, #0E0B16 100%)" }}
       >
-        {/* two portraits + chemistry */}
         <div className="flex items-end justify-center gap-3 pt-5 px-4">
+          {/* me */}
           <div className="flex flex-col items-center gap-1.5 flex-1">
             <div className="h-[96px] w-[96px] overflow-hidden rounded-xl bg-white ring-pink-neon">
               <img
@@ -76,6 +76,7 @@ export default function RelationshipDetailScreen() {
             <span className="text-xs font-bold text-pink">나</span>
           </div>
 
+          {/* chemistry */}
           <div className="flex flex-col items-center gap-1.5 pb-2 shrink-0">
             <div className="flex h-[72px] w-[72px] items-center justify-center rounded-full border-4 border-pink bg-card shadow-glow-pink">
               <div className="text-center">
@@ -86,6 +87,7 @@ export default function RelationshipDetailScreen() {
             <Badge tone="pink">잘 맞는 사이 💜</Badge>
           </div>
 
+          {/* them */}
           <div className="flex flex-col items-center gap-1.5 flex-1">
             <div className="h-[96px] w-[96px] overflow-hidden rounded-xl bg-white ring-purple-neon">
               <img
@@ -98,7 +100,7 @@ export default function RelationshipDetailScreen() {
           </div>
         </div>
 
-        {/* single emotional MING sentence */}
+        {/* single MING emotional sentence */}
         <div className="px-5 pt-4 pb-5">
           <div className="flex items-start gap-3 rounded-xl bg-white/5 border border-white/8 px-4 py-3">
             <MingGuide emotion="coach" size="xs" className="mt-0.5 shrink-0" />
@@ -131,12 +133,12 @@ export default function RelationshipDetailScreen() {
         </div>
       </div>
 
-      {/* soft divider */}
+      {/* divider */}
       <div className="px-5 mb-3">
         <p className="text-xs font-semibold text-tertiary">더 알아보기</p>
       </div>
 
-      {/* secondary — accordions with relationship language */}
+      {/* accordions */}
       <div className="px-5 space-y-2">
         <Accordion label="우리 사이 들여다보기">
           <div className="grid grid-cols-5 gap-2 pt-1">
@@ -206,19 +208,19 @@ export default function RelationshipDetailScreen() {
           </div>
         </Accordion>
 
-        {/* relationship growth — not game unlock */}
+        {/* relationship growth */}
         <div className="rounded-xl bg-card border border-border p-4">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-bold text-primary">관계 성장 현황</p>
             {r.chatUnlocked
-              ? <Badge tone="green">대화 가능</Badge>
+              ? <Badge tone="green">연결됨</Badge>
               : <span className="text-xs text-tertiary">{r.exchangeCount}/20 질문 교환</span>
             }
           </div>
           <ProgressBar value={(r.exchangeCount / 20) * 100} tone="pink" />
           <p className="mt-1.5 text-xs text-tertiary">
             {r.chatUnlocked
-              ? "서로를 충분히 이해했어요. 이제 대화를 시작할 수 있어요."
+              ? "서로를 충분히 이해했어요. 이제 대화가 시작돼요."
               : "질문을 주고받을수록 관계가 가까워져요."
             }
           </p>
