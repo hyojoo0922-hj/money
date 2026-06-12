@@ -32,14 +32,12 @@ export default function HomeScreen() {
         style={{ background: "linear-gradient(135deg, #2D1B6E 0%, #1A0E3D 60%, #0E0B16 100%)" }}
       >
         <div className="relative z-10 max-w-[60%]">
-          {/* what should I do today */}
           <p className="text-xs font-semibold text-purple mb-1">오늘 뭘 할까?</p>
           <p className="text-lg font-extrabold text-primary leading-snug">
             {unanswered > 0
               ? `상황카드 ${unanswered}개가 기다리고 있어`
               : "오늘 카드를 모두 풀었어 🎉"}
           </p>
-          {/* supporting chemistry metric */}
           <div className="mt-2 flex items-center gap-2">
             <span className="text-2xl font-black text-grad-cta">88%</span>
             <div>
@@ -48,12 +46,9 @@ export default function HomeScreen() {
             </div>
           </div>
           <ProgressBar value={88} tone="cta" height="h-1.5" className="mt-2 max-w-[130px]" />
-          {/* MING emotional hook */}
           <div className="mt-3 flex items-center gap-2">
             <MingGuide emotion="pointing" size="xs" />
-            <p className="text-xs text-secondary leading-snug">
-              '답장망상가' 성향이 살짝 올라갔어
-            </p>
+            <p className="text-xs text-secondary leading-snug">'답장망상가' 성향이 살짝 올라갔어</p>
           </div>
         </div>
         <img
@@ -63,7 +58,7 @@ export default function HomeScreen() {
         />
       </div>
 
-      {/* primary CTA — single clear action */}
+      {/* primary CTA */}
       {unanswered > 0 ? (
         <Link
           to="/situations"
@@ -90,7 +85,7 @@ export default function HomeScreen() {
         </Link>
       )}
 
-      {/* recommended relationships carousel */}
+      {/* recommended relationships */}
       <div className="mb-5">
         <div className="flex items-center justify-between px-5 mb-3">
           <h2 className="text-sm font-extrabold text-primary">연결해볼 사람</h2>
