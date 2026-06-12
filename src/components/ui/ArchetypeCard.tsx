@@ -70,3 +70,4 @@ export function ArchetypeCard({ src, name, date, active, size = "md", className,
     </div>
   );
 }
+ 
