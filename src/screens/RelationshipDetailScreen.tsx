@@ -5,7 +5,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Badge } from "@/components/ui/Badge";
 import { PremiumLabel } from "@/components/ui/PremiumLock";
 import { MingGuide } from "@/components/ming/MingGuide";
-import { mockRelationships, mockProfile } from "@/data/mock";
+import { mockRelationships, mockProfile, mockPrimaryArchetype } from "@/data/mock";
 import { cn } from "@/lib/cn";
 
 const METRICS = [
@@ -51,56 +51,77 @@ export default function RelationshipDetailScreen() {
         <button
           onClick={() => nav(-1)}
           className="flex h-9 w-9 items-center justify-center rounded-full bg-card border border-border text-primary text-lg"
-        >
-          ‹
-        </button>
+        >‹</button>
         <p className="font-extrabold text-primary">{r.name}</p>
         <div className="w-9" />
       </div>
 
-      {/* emotional hero */}
+      {/* ── EMOTIONAL HERO — portraits dominant, AI-asset ready ── */}
       <div
         className="mx-5 mb-4 rounded-xl overflow-hidden border border-border"
         style={{ background: "linear-gradient(160deg, #1A1235 0%, #0E0B16 100%)" }}
       >
         <div className="flex items-end justify-center gap-3 pt-5 px-4">
-          {/* me */}
+
+          {/* my portrait — AI-asset ready, aspect-[3/4], 120px wide */}
           <div className="flex flex-col items-center gap-1.5 flex-1">
-            <div className="h-[96px] w-[96px] overflow-hidden rounded-xl bg-white ring-pink-neon">
+            <div
+              className="overflow-hidden rounded-xl ring-pink-neon"
+              style={{
+                width: "120px",
+                height: "160px",
+                background: "linear-gradient(to bottom, #1A1235, #0E0B16)",
+              }}
+            >
               <img
                 src={CHARACTERS[mockProfile.characterId].src}
                 alt="나"
                 className="h-full w-full object-contain object-top"
+                draggable={false}
               />
             </div>
             <span className="text-xs font-bold text-pink">나</span>
+            {/* my archetype — visible, per approved spec */}
+            <span className="text-[10px] font-semibold text-pink/80">
+              {mockPrimaryArchetype.name_ko}
+            </span>
           </div>
 
-          {/* chemistry */}
-          <div className="flex flex-col items-center gap-1.5 pb-2 shrink-0">
-            <div className="flex h-[72px] w-[72px] items-center justify-center rounded-full border-4 border-pink bg-card shadow-glow-pink">
+          {/* chemistry — between portraits, visually smaller than portraits */}
+          <div className="flex flex-col items-center gap-1.5 pb-6 shrink-0">
+            <div className="flex h-[64px] w-[64px] items-center justify-center rounded-full border-4 border-pink bg-card shadow-glow-pink">
               <div className="text-center">
-                <p className="text-[9px] text-secondary leading-none mb-0.5">우리 케미</p>
-                <p className="text-xl font-black text-grad-cta leading-none">87<span className="text-xs">%</span></p>
+                <p className="text-[8px] text-secondary leading-none mb-0.5">우리 케미</p>
+                <p className="text-lg font-black text-grad-cta leading-none">87<span className="text-[10px]">%</span></p>
               </div>
             </div>
             <Badge tone="pink">잘 맞는 사이 💜</Badge>
           </div>
 
-          {/* them */}
+          {/* their portrait — AI-asset ready, aspect-[3/4], 120px wide */}
           <div className="flex flex-col items-center gap-1.5 flex-1">
-            <div className="h-[96px] w-[96px] overflow-hidden rounded-xl bg-white ring-purple-neon">
+            <div
+              className="overflow-hidden rounded-xl ring-purple-neon"
+              style={{
+                width: "120px",
+                height: "160px",
+                background: "linear-gradient(to bottom, #1A1235, #0E0B16)",
+              }}
+            >
               <img
                 src={CHARACTERS[r.characterId].src}
                 alt={r.name}
                 className="h-full w-full object-contain object-top"
+                draggable={false}
               />
             </div>
             <span className="text-xs font-bold text-secondary">{r.name}</span>
+            {/* other person's archetype intentionally hidden — privacy rules TBD */}
+            <span className="text-[10px] text-tertiary">···</span>
           </div>
         </div>
 
-        {/* single MING emotional sentence */}
+        {/* MING one-liner */}
         <div className="px-5 pt-4 pb-5">
           <div className="flex items-start gap-3 rounded-xl bg-white/5 border border-white/8 px-4 py-3">
             <MingGuide emotion="coach" size="xs" className="mt-0.5 shrink-0" />
@@ -112,28 +133,24 @@ export default function RelationshipDetailScreen() {
         </div>
       </div>
 
-      {/* primary CTA — immediately after hero */}
+      {/* primary CTA */}
       <div className="px-5 mb-4">
         <button className="w-full rounded-full bg-grad-cta py-4 text-base font-bold text-white shadow-glow-cta active:scale-[0.98] transition">
           🎴 상황카드 보내기
         </button>
       </div>
 
-      {/* quick message chips */}
+      {/* quick chips */}
       <div className="px-5 mb-5">
         <div className="no-scrollbar flex gap-2 overflow-x-auto">
           {["안부 인사", "칭찬하기", "요즘 어때?", "함께 뭐할까?"].map((chip) => (
-            <button
-              key={chip}
-              className="shrink-0 rounded-full border border-border bg-card px-3 py-2 text-xs text-secondary whitespace-nowrap active:scale-[0.97] transition"
-            >
+            <button key={chip} className="shrink-0 rounded-full border border-border bg-card px-3 py-2 text-xs text-secondary whitespace-nowrap active:scale-[0.97] transition">
               {chip}
             </button>
           ))}
         </div>
       </div>
 
-      {/* divider */}
       <div className="px-5 mb-3">
         <p className="text-xs font-semibold text-tertiary">더 알아보기</p>
       </div>
@@ -208,25 +225,21 @@ export default function RelationshipDetailScreen() {
           </div>
         </Accordion>
 
-        {/* relationship growth */}
         <div className="rounded-xl bg-card border border-border p-4">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-bold text-primary">관계 성장 현황</p>
             {r.chatUnlocked
               ? <Badge tone="green">연결됨</Badge>
-              : <span className="text-xs text-tertiary">{r.exchangeCount}/20 질문 교환</span>
-            }
+              : <span className="text-xs text-tertiary">{r.exchangeCount}/20 질문 교환</span>}
           </div>
           <ProgressBar value={(r.exchangeCount / 20) * 100} tone="pink" />
           <p className="mt-1.5 text-xs text-tertiary">
             {r.chatUnlocked
               ? "서로를 충분히 이해했어요. 이제 대화가 시작돼요."
-              : "질문을 주고받을수록 관계가 가까워져요."
-            }
+              : "질문을 주고받을수록 관계가 가까워져요."}
           </p>
         </div>
 
-        {/* premium */}
         <div className="rounded-xl bg-card border border-border px-4 py-3 flex items-center justify-between">
           <div>
             <p className="text-sm font-bold text-primary">더 깊이 알고 싶다면</p>
