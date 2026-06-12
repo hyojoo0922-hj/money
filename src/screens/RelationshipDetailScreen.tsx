@@ -18,6 +18,7 @@ const CAUTION = ["답장 속도 차이가 있어요", "서운함 표현 방식�
 const TRAITS_ME = [{ label: "표현력", me: 88, them: 42 }, { label: "공감력", me: 92, them: 78 }, { label: "즉흥성", me: 70, them: 58 }];
 const TRAITS_THEM = [{ label: "신중함", value: 82 }, { label: "독립성", value: 76 }, { label: "계획형", value: 84 }];
 const RECENT_CARDS = ["약속 시간에 30분 늦었어요", "생일을 축하했어요", "답장이 너무 느려요", "연락이 뜸해졌어요"];
+const RECENT_EMOJIS = ["🕐", "🎂", "💬", "💌"];
 
 export default function RelationshipDetailScreen() {
   const { id } = useParams();
@@ -27,7 +28,6 @@ export default function RelationshipDetailScreen() {
 
   return (
     <div className="pb-8">
-      {/* nav */}
       <div className="flex items-center justify-between px-5 pt-4 pb-2">
         <button onClick={() => nav(-1)} className="flex h-9 w-9 items-center justify-center rounded-full bg-card border border-border text-primary text-xl">‹</button>
         <p className="font-extrabold text-primary">버블걸 ♥ {r.name}</p>
@@ -35,10 +35,8 @@ export default function RelationshipDetailScreen() {
       </div>
       <p className="text-center text-xs text-secondary pb-3">서로를 이해하고 배려할 때 더 빛나는 사이에요 ✨</p>
 
-      {/* dual character hero */}
       <div className="mx-5 mb-4 rounded-xl bg-hero-bg border border-border overflow-hidden p-4">
         <div className="flex items-end justify-center gap-4">
-          {/* me */}
           <div className="flex flex-col items-center gap-2">
             <div className="h-20 w-20 overflow-hidden rounded-full ring-pink-neon">
               <img src={CHARACTERS[mockProfile.characterId].src} alt="나" className="h-full w-full object-cover object-top" />
@@ -49,11 +47,10 @@ export default function RelationshipDetailScreen() {
               <Badge tone="muted">Lv.12</Badge>
             </div>
             <div className="flex flex-wrap justify-center gap-1 max-w-[90px]">
-              {["#솔직한","#감정적인"].map(t => <span key={t} className="text-[10px] text-secondary">{t}</span>)}
+              {["#솔직한", "#감정적인"].map(t => <span key={t} className="text-[10px] text-secondary">{t}</span>)}
             </div>
           </div>
 
-          {/* chemistry donut placeholder */}
           <div className="flex flex-col items-center gap-1 pb-4">
             <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-card border-4 border-pink shadow-glow-pink">
               <div>
@@ -64,7 +61,6 @@ export default function RelationshipDetailScreen() {
             <Badge tone="pink">좋은 케미에요! 💜</Badge>
           </div>
 
-          {/* them */}
           <div className="flex flex-col items-center gap-2">
             <div className="h-20 w-20 overflow-hidden rounded-full ring-purple-neon">
               <img src={CHARACTERS[r.characterId].src} alt={r.name} className="h-full w-full object-cover object-top" />
@@ -75,13 +71,12 @@ export default function RelationshipDetailScreen() {
               <Badge tone="muted">Lv.11</Badge>
             </div>
             <div className="flex flex-wrap justify-center gap-1 max-w-[90px]">
-              {["#신중한","#배려심"].map(t => <span key={t} className="text-[10px] text-secondary">{t}</span>)}
+              {["#신중한", "#배려심"].map(t => <span key={t} className="text-[10px] text-secondary">{t}</span>)}
             </div>
           </div>
         </div>
       </div>
 
-      {/* 5-metric status grid */}
       <div className="mx-5 mb-4 rounded-xl bg-card border border-border p-4">
         <div className="flex items-center justify-between mb-3">
           <p className="font-bold text-primary">관계 상태</p>
@@ -101,7 +96,6 @@ export default function RelationshipDetailScreen() {
         </div>
       </div>
 
-      {/* good / caution columns */}
       <div className="mx-5 mb-4 grid grid-cols-2 gap-3">
         <div className="rounded-xl bg-card border border-green/20 p-3">
           <p className="text-xs font-bold text-green mb-2">👍 우리가 잘 맞는 점</p>
@@ -123,7 +117,6 @@ export default function RelationshipDetailScreen() {
         </div>
       </div>
 
-      {/* MING coaching */}
       <div className="mx-5 mb-4">
         <MingInsightCard emotion="coach" title="MING의 관계 코칭" ai
           message={`요즘 ${r.name}은 표현은 적지만 관심은 꾸준한 편이에요. 짧게라도 먼저 연락해보면 좋은 반응을 얻을 수 있어요! 💜`} />
@@ -134,7 +127,6 @@ export default function RelationshipDetailScreen() {
         </div>
       </div>
 
-      {/* head-to-head trait comparison */}
       <div className="mx-5 mb-4 rounded-xl bg-card border border-border p-4">
         <div className="flex items-center justify-between mb-3">
           <p className="font-bold text-primary">성향 비교</p>
@@ -171,7 +163,6 @@ export default function RelationshipDetailScreen() {
         </div>
       </div>
 
-      {/* recent situation cards strip */}
       <div className="mx-5 mb-4">
         <div className="flex items-center justify-between mb-2">
           <p className="font-bold text-primary">최근 상황카드</p>
@@ -180,14 +171,13 @@ export default function RelationshipDetailScreen() {
         <div className="no-scrollbar flex gap-2 overflow-x-auto">
           {RECENT_CARDS.map((card, i) => (
             <div key={i} className="shrink-0 rounded-lg bg-card border border-border p-3 w-[110px]">
-              <span className="text-lg block mb-1">{["🕐","🎂","💬","💌"][i]}</span>
+              <span className="text-lg block mb-1">{RECENT_EMOJIS[i] ?? ""}</span>
               <p className="text-[11px] text-secondary leading-tight">{card}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* message bar */}
       <div className="mx-5 mb-4">
         <div className="flex items-center gap-2 rounded-xl bg-card border border-border p-3">
           <input placeholder="메시지를 입력하세요..." className="flex-1 bg-transparent text-sm text-primary placeholder:text-tertiary outline-none" />
@@ -200,7 +190,6 @@ export default function RelationshipDetailScreen() {
         </div>
       </div>
 
-      {/* chat unlock info */}
       <div className="mx-5 mb-4 rounded-xl bg-card border border-border p-4">
         <div className="flex items-center justify-between mb-2">
           <p className="font-bold text-primary">채팅 해금 현황</p>
@@ -214,7 +203,6 @@ export default function RelationshipDetailScreen() {
         <p className="mt-1.5 text-xs text-tertiary">관계 성장 조건 · 20회 교환 · 상호 동의 충족 시 해금</p>
       </div>
 
-      {/* premium */}
       <div className="mx-5 mb-4 rounded-xl bg-card border border-border p-4">
         <div className="flex items-center justify-between mb-1">
           <p className="font-bold text-primary">심층 궁합 리포트</p>
@@ -224,21 +212,11 @@ export default function RelationshipDetailScreen() {
         <button className="w-full rounded-full border border-purple/50 py-2.5 text-sm font-semibold text-purple">미리보기</button>
       </div>
 
-      {/* sticky bottom CTA */}
       <div className="mx-5">
         <button className="w-full rounded-full bg-grad-cta py-4 text-base font-bold text-white shadow-glow-cta">
           🎴 상황카드 보내기
         </button>
       </div>
-    </div>
-  );
-}
-
-function ProgressBar({ value, tone, height }: { value: number; tone?: string; height?: string }) {
-  const fills: Record<string, string> = { pink: "bg-pink", cool: "bg-grad-cool", cta: "bg-grad-cta" };
-  return (
-    <div className={`w-full overflow-hidden rounded-full bg-border ${height ?? "h-2"}`}>
-      <div className={`h-full rounded-full ${fills[tone ?? "cta"] ?? "bg-grad-cta"}`} style={{ width: `${Math.max(0, Math.min(100, value))}%` }} />
     </div>
   );
 }
