@@ -1,6 +1,8 @@
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import type { CategoryScore } from "@/data/mock";
-const tones = ["pink","purple","blue","green","yellow","pink","purple","blue"] as const;
+
+const tones = ["pink", "blue", "green", "cta", "cool", "pink", "blue", "green"] as const;
+
 export function CategoryScoreBars({ scores }: { scores: CategoryScore[] }) {
   return (
     <div className="space-y-3">
