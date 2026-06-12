@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
 import { MingGuide } from "@/components/ming/MingGuide";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { ArchetypeCard } from "@/components/ui/ArchetypeCard";
+import { Badge } from "@/components/ui/Badge";
 import { CHARACTERS } from "@/lib/assets";
 import { mockProfile, mockPrimaryArchetype, mockDailyCards, mockRecommendations } from "@/data/mock";
-import { Badge } from "@/components/ui/Badge";
 
 export default function HomeScreen() {
   const unanswered = mockDailyCards.filter((c) => !c.answered).length;
@@ -37,22 +36,19 @@ export default function HomeScreen() {
           <p className="text-xs text-secondary mt-1.5 leading-snug">
             답장이 늦으면 머릿속이 바빠지는 사람
           </p>
-          {/* chemistry supporting line */}
           <div className="mt-3 flex items-center gap-2">
             <span className="text-sm font-bold text-primary">케미 88%</span>
             <span className="text-xs text-green font-semibold">↑ 6%</span>
           </div>
-          <ProgressBar value={88} tone="cta" height="h-1" className="mt-1.5" style={{ maxWidth: "110px" }} />
-          {/* MING tip */}
+          <ProgressBar value={88} tone="cta" height="h-1" className="mt-1.5" />
           <div className="mt-3 flex items-center gap-2">
             <MingGuide emotion="pointing" size="xs" />
             <p className="text-xs text-secondary leading-snug">최근 성향이 조금 바뀌었어</p>
           </div>
         </div>
 
-        {/* right: archetype character image — dominant anchor */}
+        {/* right: character portrait — dominant anchor */}
         <div className="absolute bottom-0 right-0 top-0 flex items-end justify-end pr-2">
-          {/* placeholder: user's base portrait. Replaced by archetype-specific image in Phase 5. */}
           <img
             src={CHARACTERS[mockProfile.characterId].src}
             alt={mockPrimaryArchetype.name_ko}
@@ -90,7 +86,7 @@ export default function HomeScreen() {
         </Link>
       )}
 
-      {/* recommended relationships carousel */}
+      {/* 연결해볼 사람 — recommendation carousel */}
       <div className="mb-2">
         <div className="flex items-center justify-between px-5 mb-3">
           <h2 className="text-sm font-extrabold text-primary">연결해볼 사람</h2>
