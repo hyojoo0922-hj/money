@@ -47,47 +47,104 @@ export default function ProfileScreen() {
 
   return (
     <div className="pb-4">
-      {/* character header */}
-      <div className="mx-5 mt-5 mb-4 flex items-start gap-4">
-        <div className="h-[100px] w-[100px] overflow-hidden rounded-xl bg-white ring-pink-neon shrink-0">
-          <img
-            src={CHARACTERS[mockProfile.characterId].src}
-            alt=""
-            className="h-full w-full object-contain object-top"
-          />
+
+      {/* ── CHARACTER PORTRAIT — full-width hero ── */}
+      <div
+        className="relative overflow-hidden mx-5 mt-5 rounded-xl border border-purple/30"
+        style={{ background: "linear-gradient(160deg, #1A1235 0%, #0E0B16 100%)", minHeight: "220px" }}
+      >
+        {/* portrait — dominant */}
+        <div className="flex justify-center pt-4">
+          <div
+            className="overflow-hidden rounded-xl bg-white ring-pink-neon"
+            style={{ width: "140px", height: "175px" }}
+          >
+            <img
+              src={CHARACTERS[mockProfile.characterId].src}
+              alt={mockProfile.displayName}
+              className="h-full w-full object-contain object-top"
+            />
+          </div>
         </div>
-        <div className="flex-1 min-w-0 pt-1">
-          <p className="text-xl font-extrabold text-primary">{mockProfile.displayName}</p>
-          <p className="text-sm font-bold text-primary mt-0.5">{mockPrimaryArchetype.name_ko}</p>
-          {/* 나다움 — prominent */}
-          <div className="mt-2 flex items-baseline gap-1.5">
-            <p className="text-3xl font-black text-grad-cta leading-none">92%</p>
-            <div>
-              <p className="text-xs font-bold text-pink">나다움</p>
-              <p className="text-[10px] text-secondary">나답게 성장 중 ✨</p>
+        {/* name + archetype as title */}
+        <div className="text-center px-5 pt-3 pb-5">
+          <p className="text-sm text-secondary">{mockProfile.displayName}</p>
+          <p className="text-2xl font-black text-grad-cta leading-tight mt-0.5">
+            {mockPrimaryArchetype.emoji} {mockPrimaryArchetype.name_ko}
+          </p>
+          {/* 나다움 — supporting metric */}
+          <div className="flex items-center justify-center gap-2 mt-2">
+            <span className="text-lg font-black text-pink">92%</span>
+            <span className="text-xs font-bold text-pink">나다움</span>
+            <span className="text-xs text-secondary">· 나답게 성장 중 ✨</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── EVOLUTION STRIP — open by default ── */}
+      <div className="px-5 mt-4 mb-4">
+        <p className="text-xs font-semibold text-secondary mb-3">나의 변화 히스토리</p>
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+          {mockEvolutionHistory.map((e, i) => (
+            <div key={e.id} className="flex items-center gap-2 shrink-0">
+              <div className="flex flex-col items-center">
+                <div className="w-[68px] aspect-[3/4] overflow-hidden rounded-lg bg-white ring-1 ring-border">
+                  <img
+                    src={CHARACTERS[e.characterId].src}
+                    alt=""
+                    className="h-full w-full object-contain object-top"
+                  />
+                </div>
+                <p className="text-[10px] font-bold text-primary mt-1 text-center leading-tight w-[68px]">
+                  {e.archetypeName}
+                </p>
+                <p className="text-[9px] text-tertiary text-center">{e.date}</p>
+              </div>
+              {i < mockEvolutionHistory.length - 1 && (
+                <span className="text-tertiary text-sm shrink-0">→</span>
+              )}
+            </div>
+          ))}
+          {/* current — highlighted */}
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-tertiary text-sm shrink-0">→</span>
+            <div className="flex flex-col items-center">
+              <div className="w-[68px] aspect-[3/4] overflow-hidden rounded-lg bg-white ring-2 ring-pink shadow-glow-pink">
+                <img
+                  src={CHARACTERS[mockProfile.characterId].src}
+                  alt=""
+                  className="h-full w-full object-contain object-top"
+                />
+              </div>
+              <p className="text-[10px] font-bold text-pink mt-1 text-center leading-tight w-[68px]">
+                {mockPrimaryArchetype.name_ko}
+              </p>
+              <p className="text-[9px] text-pink text-center">지금</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 mt-2">
-            <Badge tone="pink">Lv.{mockProfile.level}</Badge>
-            <span className="text-xs text-secondary">1,250 / 2,000 EXP</span>
-          </div>
-          <ProgressBar value={62.5} tone="cta" height="h-1.5" className="mt-1.5 max-w-[140px]" />
         </div>
       </div>
 
-      {/* keyword chips */}
-      <div className="px-5 mb-4 flex flex-wrap gap-1.5">
-        {KEYWORDS.map((k) => (
-          <span
-            key={k}
-            className="rounded-full bg-purple/10 border border-purple/20 px-2.5 py-1 text-xs font-semibold text-purple"
-          >
-            {k}
-          </span>
-        ))}
+      {/* ── level / EXP / keywords — below evolution ── */}
+      <div className="px-5 mb-4">
+        <div className="flex items-center gap-3 mb-3">
+          <Badge tone="pink">Lv.{mockProfile.level}</Badge>
+          <span className="text-xs text-secondary">1,250 / 2,000 EXP</span>
+          <ProgressBar value={62.5} tone="cta" height="h-1.5" className="flex-1 max-w-[120px]" />
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {KEYWORDS.map((k) => (
+            <span
+              key={k}
+              className="rounded-full bg-purple/10 border border-purple/20 px-2.5 py-1 text-xs font-semibold text-purple"
+            >
+              {k}
+            </span>
+          ))}
+        </div>
       </div>
 
-      {/* MING commentary — expandable, warmer language */}
+      {/* MING commentary */}
       <div className="mx-5 mb-4 rounded-xl bg-card border border-purple/20 p-3">
         <button
           onClick={() => setMingExpanded((v) => !v)}
@@ -156,24 +213,6 @@ export default function ProfileScreen() {
                 <p className="text-lg font-extrabold text-primary leading-none">{a.value}</p>
                 <p className="text-[10px] text-secondary mt-0.5">{a.label}</p>
                 <p className="text-[9px] text-green mt-0.5">{a.delta}</p>
-              </div>
-            ))}
-          </div>
-        </Accordion>
-
-        <Accordion label="진화 히스토리">
-          <div className="no-scrollbar flex gap-3 overflow-x-auto pt-2">
-            {mockEvolutionHistory.map((e) => (
-              <div key={e.id} className="shrink-0 w-[80px]">
-                <div className="aspect-[3/4] w-full overflow-hidden rounded-lg bg-white ring-1 ring-border mb-1">
-                  <img
-                    src={CHARACTERS[e.characterId].src}
-                    alt=""
-                    className="h-full w-full object-contain object-top"
-                  />
-                </div>
-                <p className="text-[11px] font-bold text-primary leading-tight">{e.archetypeName}</p>
-                <p className="text-[10px] text-tertiary">{e.date}</p>
               </div>
             ))}
           </div>
