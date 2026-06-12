@@ -23,18 +23,16 @@ export function RelationshipListItem({ r, best }: { r: RelationshipItem; best?: 
       )}
     >
       <div className="relative shrink-0">
-        <div className="h-14 w-14 overflow-hidden rounded-lg ring-1 ring-border">
-          <img src={CHARACTERS[r.characterId].src} alt="" className="h-full w-full object-cover object-top" />
+        <div className="h-14 w-14 overflow-hidden rounded-lg bg-white ring-1 ring-border">
+          <img src={CHARACTERS[r.characterId].src} alt="" className="h-full w-full object-contain object-top" />
         </div>
-        {best && (
-          <span className="absolute -top-1 -right-1 text-[11px]">✨</span>
-        )}
+        {best && <span className="absolute -top-1 -right-1 text-[11px]">✨</span>}
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <p className="font-bold text-primary truncate">{r.name}</p>
           {best && <Badge tone="pink">베스트 케미</Badge>}
-          {r.chatUnlocked && <Badge tone="green">채팅 해금</Badge>}
+          {r.chatUnlocked && <Badge tone="green">대화 가능</Badge>}
         </div>
         <p className="text-xs text-pink font-semibold">{r.levelLabel}</p>
         <div className="flex items-center gap-1 mt-0.5">
