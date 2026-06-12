@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/Badge";
 import { PremiumLabel } from "@/components/ui/PremiumLock";
 import { Sparkline } from "@/components/ui/Sparkline";
 import { MingGuide } from "@/components/ming/MingGuide";
+import { ArchetypeCard } from "@/components/ui/ArchetypeCard";
 import { mockProfile, mockPrimaryArchetype, mockTopTraits, mockEvolutionHistory } from "@/data/mock";
 import { cn } from "@/lib/cn";
 
@@ -14,7 +15,7 @@ const DNA_TRAITS = [
   { emoji: "🛡", label: "신중함", value: 76, color: "bg-blue",   text: "text-blue"   },
 ];
 
-const ACCURACY_TREND = [79, 81, 84, 87, 89, 91, 92];
+const ACCURACY_TREND = [79,81,84,87,89,91,92];
 
 const ACTIVITY = [
   { emoji: "🎴", label: "상황카드", value: 38, delta: "+6" },
@@ -48,32 +49,32 @@ export default function ProfileScreen() {
   return (
     <div className="pb-4">
 
-      {/* ── CHARACTER PORTRAIT — full-width hero ── */}
+      {/* ── CHARACTER PORTRAIT — large, full-width zone ── */}
       <div
         className="relative overflow-hidden mx-5 mt-5 rounded-xl border border-purple/30"
-        style={{ background: "linear-gradient(160deg, #1A1235 0%, #0E0B16 100%)", minHeight: "220px" }}
+        style={{ background: "linear-gradient(160deg, #1A1235 0%, #0E0B16 100%)", minHeight: "240px" }}
       >
-        {/* portrait — dominant */}
-        <div className="flex justify-center pt-4">
+        <div className="flex justify-center pt-5">
+          {/* AI-asset ready container — 140px wide, aspect-[3/4] */}
           <div
-            className="overflow-hidden rounded-xl bg-white ring-pink-neon"
-            style={{ width: "140px", height: "175px" }}
+            className="overflow-hidden rounded-xl bg-gradient-to-b from-[#1A1235] to-[#0E0B16] ring-pink-neon"
+            style={{ width: "140px", height: "187px" }}
           >
             <img
               src={CHARACTERS[mockProfile.characterId].src}
               alt={mockProfile.displayName}
               className="h-full w-full object-contain object-top"
+              draggable={false}
             />
           </div>
         </div>
-        {/* name + archetype as title */}
+        {/* archetype as screen title */}
         <div className="text-center px-5 pt-3 pb-5">
           <p className="text-sm text-secondary">{mockProfile.displayName}</p>
           <p className="text-2xl font-black text-grad-cta leading-tight mt-0.5">
             {mockPrimaryArchetype.emoji} {mockPrimaryArchetype.name_ko}
           </p>
-          {/* 나다움 — supporting metric */}
-          <div className="flex items-center justify-center gap-2 mt-2">
+          <div className="flex items-center justify-center gap-2 mt-1.5">
             <span className="text-lg font-black text-pink">92%</span>
             <span className="text-xs font-bold text-pink">나다움</span>
             <span className="text-xs text-secondary">· 나답게 성장 중 ✨</span>
@@ -81,51 +82,38 @@ export default function ProfileScreen() {
         </div>
       </div>
 
-      {/* ── EVOLUTION STRIP — open by default ── */}
+      {/* ── EVOLUTION HISTORY — open by default, horizontal swipe ── */}
       <div className="px-5 mt-4 mb-4">
         <p className="text-xs font-semibold text-secondary mb-3">나의 변화 히스토리</p>
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+        <div className="no-scrollbar flex items-start gap-3 overflow-x-auto pb-1">
           {mockEvolutionHistory.map((e, i) => (
-            <div key={e.id} className="flex items-center gap-2 shrink-0">
-              <div className="flex flex-col items-center">
-                <div className="w-[68px] aspect-[3/4] overflow-hidden rounded-lg bg-white ring-1 ring-border">
-                  <img
-                    src={CHARACTERS[e.characterId].src}
-                    alt=""
-                    className="h-full w-full object-contain object-top"
-                  />
-                </div>
-                <p className="text-[10px] font-bold text-primary mt-1 text-center leading-tight w-[68px]">
-                  {e.archetypeName}
-                </p>
-                <p className="text-[9px] text-tertiary text-center">{e.date}</p>
-              </div>
+            <div key={e.id} className="flex items-center gap-3 shrink-0">
+              {/* lg size for profile — 140px image area */}
+              <ArchetypeCard
+                src={CHARACTERS[e.characterId].src}
+                name={e.archetypeName}
+                date={e.date}
+                size="lg"
+              />
               {i < mockEvolutionHistory.length - 1 && (
-                <span className="text-tertiary text-sm shrink-0">→</span>
+                <span className="text-tertiary text-base shrink-0 mt-[-24px]">→</span>
               )}
             </div>
           ))}
-          {/* current — highlighted */}
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-tertiary text-sm shrink-0">→</span>
-            <div className="flex flex-col items-center">
-              <div className="w-[68px] aspect-[3/4] overflow-hidden rounded-lg bg-white ring-2 ring-pink shadow-glow-pink">
-                <img
-                  src={CHARACTERS[mockProfile.characterId].src}
-                  alt=""
-                  className="h-full w-full object-contain object-top"
-                />
-              </div>
-              <p className="text-[10px] font-bold text-pink mt-1 text-center leading-tight w-[68px]">
-                {mockPrimaryArchetype.name_ko}
-              </p>
-              <p className="text-[9px] text-pink text-center">지금</p>
-            </div>
+          {/* current — active state */}
+          <div className="flex items-center gap-3 shrink-0">
+            <span className="text-tertiary text-base shrink-0 mt-[-24px]">→</span>
+            <ArchetypeCard
+              src={CHARACTERS[mockProfile.characterId].src}
+              name={mockPrimaryArchetype.name_ko}
+              active
+              size="lg"
+            />
           </div>
         </div>
       </div>
 
-      {/* ── level / EXP / keywords — below evolution ── */}
+      {/* level / EXP / keywords */}
       <div className="px-5 mb-4">
         <div className="flex items-center gap-3 mb-3">
           <Badge tone="pink">Lv.{mockProfile.level}</Badge>
@@ -134,10 +122,7 @@ export default function ProfileScreen() {
         </div>
         <div className="flex flex-wrap gap-1.5">
           {KEYWORDS.map((k) => (
-            <span
-              key={k}
-              className="rounded-full bg-purple/10 border border-purple/20 px-2.5 py-1 text-xs font-semibold text-purple"
-            >
+            <span key={k} className="rounded-full bg-purple/10 border border-purple/20 px-2.5 py-1 text-xs font-semibold text-purple">
               {k}
             </span>
           ))}
@@ -197,9 +182,7 @@ export default function ProfileScreen() {
           <div className="pt-2">
             <Sparkline values={ACCURACY_TREND} width={280} height={60} color="#FF4FDB" />
             <div className="flex justify-between text-[10px] text-tertiary px-1 mt-1">
-              {["6/3","6/4","6/5","6/6","6/7","6/8","오늘"].map((d) => (
-                <span key={d}>{d}</span>
-              ))}
+              {["6/3","6/4","6/5","6/6","6/7","6/8","오늘"].map((d) => <span key={d}>{d}</span>)}
             </div>
             <p className="mt-2 text-xs text-green font-semibold">+13% 지난 주 대비 성장했어요!</p>
           </div>
@@ -229,10 +212,7 @@ export default function ProfileScreen() {
         <Accordion label="설정">
           <div className="space-y-1 pt-1">
             {SETTINGS.map((s) => (
-              <button
-                key={s}
-                className="w-full flex items-center justify-between py-2.5 text-sm text-primary border-b border-border/30 last:border-0"
-              >
+              <button key={s} className="w-full flex items-center justify-between py-2.5 text-sm text-primary border-b border-border/30 last:border-0">
                 {s}
                 <span className="text-tertiary text-xs">›</span>
               </button>
