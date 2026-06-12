@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
 import { MingGuide } from "@/components/ming/MingGuide";
-import { Badge } from "@/components/ui/Badge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { CHARACTERS, BRAND } from "@/lib/assets";
-import { mockProfile, mockRecommendations, mockDailyCards } from "@/data/mock";
+import { CHARACTERS } from "@/lib/assets";
+import { mockProfile, mockPrimaryArchetype, mockDailyCards } from "@/data/mock";
 
 const quickActions = [
   { to: "/situations",    emoji: "🎴", label: "상황카드",  color: "bg-purple/80" },
@@ -26,36 +25,43 @@ export default function HomeScreen() {
         </button>
       </div>
 
-      {/* hero — action-first */}
+      {/* TODAY'S ME — character evolution hero */}
       <div
-        className="mx-5 mb-4 relative overflow-hidden rounded-xl border border-purple/30 p-5"
-        style={{ background: "linear-gradient(135deg, #2D1B6E 0%, #1A0E3D 60%, #0E0B16 100%)" }}
+        className="mx-5 mb-4 relative overflow-hidden rounded-xl border border-purple/30"
+        style={{ background: "linear-gradient(135deg, #2D1B6E 0%, #1A0E3D 60%, #0E0B16 100%)", minHeight: "200px" }}
       >
-        <div className="relative z-10 max-w-[60%]">
-          <p className="text-xs font-semibold text-purple mb-1">오늘 뭘 할까?</p>
-          <p className="text-lg font-extrabold text-primary leading-snug">
-            {unanswered > 0
-              ? `상황카드 ${unanswered}개가 기다리고 있어`
-              : "오늘 카드를 모두 풀었어 🎉"}
+        {/* text left */}
+        <div className="relative z-10 p-5 max-w-[58%]">
+          <p className="text-xs font-semibold text-purple mb-2">오늘의 나</p>
+          {/* archetype as title */}
+          <p className="text-2xl font-black text-grad-cta leading-tight">
+            {mockPrimaryArchetype.emoji} {mockPrimaryArchetype.name_ko}
           </p>
-          <div className="mt-2 flex items-center gap-2">
-            <span className="text-2xl font-black text-grad-cta">88%</span>
-            <div>
-              <p className="text-[11px] text-secondary leading-none">케미 포인트</p>
-              <p className="text-[11px] text-green font-semibold">↑ 6% 어제보다</p>
-            </div>
+          <p className="text-xs text-secondary mt-1.5 leading-snug">
+            답장이 늦으면 머릿속이 바빠지는 사람
+          </p>
+          {/* chemistry as supporting line */}
+          <div className="mt-3 flex items-center gap-2">
+            <span className="text-sm font-bold text-primary">케미 88%</span>
+            <span className="text-xs text-green">↑ 6%</span>
           </div>
-          <ProgressBar value={88} tone="cta" height="h-1.5" className="mt-2 max-w-[130px]" />
+          <ProgressBar value={88} tone="cta" height="h-1" className="mt-1.5 max-w-[120px]" />
+          {/* MING tip */}
           <div className="mt-3 flex items-center gap-2">
             <MingGuide emotion="pointing" size="xs" />
-            <p className="text-xs text-secondary leading-snug">'답장망상가' 성향이 살짝 올라갔어</p>
+            <p className="text-xs text-secondary leading-snug">최근 성향이 조금 바뀌었어</p>
           </div>
         </div>
-        <img
-          src={BRAND.bubbleGirl}
-          alt=""
-          className="absolute bottom-0 right-0 h-[160px] w-auto object-contain object-bottom pointer-events-none"
-        />
+
+        {/* character portrait — dominant right anchor */}
+        <div className="absolute bottom-0 right-0 h-full flex items-end">
+          <img
+            src={CHARACTERS[mockProfile.characterId].src}
+            alt="오늘의 나"
+            className="h-[190px] w-auto object-contain object-bottom"
+            style={{ maxWidth: "160px" }}
+          />
+        </div>
       </div>
 
       {/* primary CTA */}
@@ -67,7 +73,7 @@ export default function HomeScreen() {
           <span className="text-2xl">🎴</span>
           <div className="flex-1">
             <p className="text-sm font-bold text-white">상황카드 답하기</p>
-            <p className="text-xs text-white/70">답할수록 관계가 가까워져</p>
+            <p className="text-xs text-white/70">답할수록 내 모습이 선명해져</p>
           </div>
           <span className="text-white/80 text-lg">›</span>
         </Link>
@@ -84,42 +90,6 @@ export default function HomeScreen() {
           <span className="text-secondary text-lg">›</span>
         </Link>
       )}
-
-      {/* recommended relationships */}
-      <div className="mb-5">
-        <div className="flex items-center justify-between px-5 mb-3">
-          <h2 className="text-sm font-extrabold text-primary">연결해볼 사람</h2>
-          <Link to="/relationships" className="text-xs font-semibold text-purple">더보기 ›</Link>
-        </div>
-        <div className="no-scrollbar flex gap-3 overflow-x-auto pl-5 pr-3">
-          {mockRecommendations.map((rec) => (
-            <Link
-              key={rec.id}
-              to="/relationships"
-              className="shrink-0 w-[150px] rounded-xl bg-card border border-border overflow-hidden active:scale-[0.97] transition"
-            >
-              <div className="relative h-[140px] bg-white">
-                <div className="absolute top-2 left-2 z-10">
-                  <Badge tone="pink">추천</Badge>
-                </div>
-                <div className="absolute top-2 right-2 z-10 flex items-center gap-0.5 rounded-full bg-black/50 px-2 py-0.5">
-                  <span className="text-pink text-xs">♥</span>
-                  <span className="text-xs font-bold text-white">91%</span>
-                </div>
-                <img
-                  src={CHARACTERS[rec.characterId].src}
-                  alt=""
-                  className="h-full w-full object-contain object-top"
-                />
-              </div>
-              <div className="p-2.5">
-                <p className="font-bold text-primary text-sm">{rec.name}</p>
-                <p className="text-[11px] text-secondary mt-0.5 leading-tight">{rec.reason}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
 
       {/* quick actions */}
       <div className="px-5">
