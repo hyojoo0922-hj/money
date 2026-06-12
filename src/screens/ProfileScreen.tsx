@@ -24,8 +24,7 @@ const ACTIVITY = [
 ];
 
 const KEYWORDS = ["따뜻함", "솔직함", "정의로움", "직설적", "감성적"];
-
-const SETTINGS = ["공개 설정", "SNS 연동", "알림 설정", "계정 설정", "도움말"];
+const SETTINGS  = ["공개 설정", "SNS 연동", "알림 설정", "계정 설정", "도움말"];
 
 function Accordion({ label, children }: { label: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -48,8 +47,8 @@ export default function ProfileScreen() {
 
   return (
     <div className="pb-4">
-      {/* character header — primary */}
-      <div className="mx-5 mt-5 mb-4 flex items-center gap-4">
+      {/* character header */}
+      <div className="mx-5 mt-5 mb-4 flex items-start gap-4">
         <div className="h-[100px] w-[100px] overflow-hidden rounded-xl bg-white ring-pink-neon shrink-0">
           <img
             src={CHARACTERS[mockProfile.characterId].src}
@@ -57,21 +56,28 @@ export default function ProfileScreen() {
             className="h-full w-full object-contain object-top"
           />
         </div>
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 pt-1">
           <p className="text-xl font-extrabold text-primary">{mockProfile.displayName}</p>
-          <div className="flex items-center gap-2 mt-1">
+          <p className="text-sm font-bold text-primary mt-0.5">{mockPrimaryArchetype.name_ko}</p>
+
+          {/* 나다움 — prominent */}
+          <div className="mt-2 flex items-baseline gap-1.5">
+            <p className="text-3xl font-black text-grad-cta leading-none">92%</p>
+            <div>
+              <p className="text-xs font-bold text-pink">나다움</p>
+              <p className="text-[10px] text-secondary">나답게 성장 중 ✨</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 mt-2">
             <Badge tone="pink">Lv.{mockProfile.level}</Badge>
             <span className="text-xs text-secondary">1,250 / 2,000 EXP</span>
           </div>
-          <ProgressBar value={62.5} tone="cta" height="h-1.5" className="mt-2 max-w-[140px]" />
-          <p className="mt-1.5 text-sm font-bold text-primary">{mockPrimaryArchetype.name_ko}</p>
-          <p className="text-xs text-secondary">
-            캐릭터 정확도 <span className="font-bold text-pink">92%</span>
-          </p>
+          <ProgressBar value={62.5} tone="cta" height="h-1.5" className="mt-1.5 max-w-[140px]" />
         </div>
       </div>
 
-      {/* keyword chips — compact */}
+      {/* keyword chips */}
       <div className="px-5 mb-4 flex flex-wrap gap-1.5">
         {KEYWORDS.map((k) => (
           <span
@@ -83,7 +89,7 @@ export default function ProfileScreen() {
         ))}
       </div>
 
-      {/* MING commentary — expandable one-liner */}
+      {/* MING — expandable, warmer language */}
       <div className="mx-5 mb-4 rounded-xl bg-card border border-purple/20 p-3">
         <button
           onClick={() => setMingExpanded((v) => !v)}
@@ -91,7 +97,7 @@ export default function ProfileScreen() {
         >
           <MingGuide emotion="happy" size="sm" />
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold text-pink">MING이 바라본 요즘 너</p>
+            <p className="text-xs font-bold text-pink">요즘 너의 변화 💜</p>
             <p className="text-xs text-secondary truncate">
               감정을 더 솔직하게 표현하고 있어! 작은 변화들이 너를 더 단단하게 만들고 있어 ✨
             </p>
@@ -100,7 +106,11 @@ export default function ProfileScreen() {
         </button>
         {mingExpanded && (
           <div className="mt-3 pt-3 border-t border-border/50 space-y-1.5">
-            {[["😊", "솔직함 상승", "↑ 15%", "text-green"], ["♥", "공감 표현 증가", "↑ 12%", "text-pink"], ["🛡", "감정 억제 감소", "↓ 8%", "text-blue"]].map(([e, l, v, c]) => (
+            {[
+              ["😊", "솔직함 상승",   "↑ 15%", "text-green"],
+              ["♥",  "공감 표현 증가", "↑ 12%", "text-pink" ],
+              ["🛡", "감정 억제 감소", "↓ 8%",  "text-blue" ],
+            ].map(([e, l, v, c]) => (
               <div key={String(l)} className="flex items-center gap-2">
                 <span className="text-sm">{e}</span>
                 <p className="flex-1 text-xs text-secondary">{l}</p>
@@ -111,15 +121,13 @@ export default function ProfileScreen() {
         )}
       </div>
 
-      {/* top 3 DNA traits — visible */}
+      {/* top 3 DNA traits */}
       <div className="px-5 mb-4">
         <p className="text-xs font-semibold text-secondary mb-2">성향 DNA</p>
         <div className="grid grid-cols-3 gap-2">
           {DNA_TRAITS.map((t) => (
             <div key={t.label} className="rounded-xl bg-card border border-border p-3 flex flex-col gap-1">
-              <div className="flex items-center justify-between">
-                <span className="text-base">{t.emoji}</span>
-              </div>
+              <span className="text-base">{t.emoji}</span>
               <p className={`text-xl font-extrabold ${t.text} leading-none`}>{t.value}</p>
               <div className={`h-1 w-10 rounded-full ${t.color}`} />
               <p className="text-[11px] text-secondary">{t.label}</p>
@@ -128,7 +136,7 @@ export default function ProfileScreen() {
         </div>
       </div>
 
-      {/* accordions — all secondary */}
+      {/* accordions */}
       <div className="px-5 space-y-2">
         <Accordion label="7일 변화 그래프">
           <div className="pt-2">
@@ -138,7 +146,7 @@ export default function ProfileScreen() {
                 <span key={d}>{d}</span>
               ))}
             </div>
-            <p className="mt-2 text-xs text-green font-semibold">+13% 지난 주 대비 상승했어요!</p>
+            <p className="mt-2 text-xs text-green font-semibold">+13% 지난 주 대비 성장했어요!</p>
           </div>
         </Accordion>
 
@@ -173,16 +181,14 @@ export default function ProfileScreen() {
           </div>
         </Accordion>
 
-        {/* premium */}
         <div className="rounded-xl bg-card border border-border px-4 py-3 flex items-center justify-between">
           <div>
-            <p className="text-sm font-bold text-primary">프리미엄 리포트</p>
+            <p className="text-sm font-bold text-primary">더 깊이 알고 싶다면</p>
             <p className="text-xs text-tertiary mt-0.5">AI 인간 리포트 · 미래 시뮬레이션</p>
           </div>
           <PremiumLabel />
         </div>
 
-        {/* settings */}
         <Accordion label="설정">
           <div className="space-y-1 pt-1">
             {SETTINGS.map((s) => (
