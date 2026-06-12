@@ -1,69 +1,41 @@
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/cn";
 
-// Navigation IA: 홈·상황카드·관계·리포트·마이 (per visual reference)
 const tabs = [
   {
     to: "/",
     label: "홈",
-    icon: (a: boolean) => (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" fill={a ? "currentColor" : "none"}
-        stroke="currentColor" strokeWidth={a ? 0 : 1.8} strokeLinecap="round">
-        <path d="M3 12L12 4l9 8" />
-        <path d="M5 10v9h5v-5h4v5h5v-9" fill={a ? "currentColor" : "none"} />
-      </svg>
-    ),
+    d: "M3 12L12 4l9 8M5 10v9h5v-5h4v5h5v-9",
   },
   {
     to: "/situations",
     label: "상황카드",
-    icon: (a: boolean) => (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none"
-        stroke="currentColor" strokeWidth={a ? 2.2 : 1.8} strokeLinecap="round">
-        <rect x="3" y="5" width="18" height="14" rx="3" />
-        <path d="M8 10h8M8 14h5" />
-      </svg>
-    ),
+    d: "M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6zM8 10h8M8 14h5",
   },
   {
     to: "/relationships",
     label: "관계",
-    icon: (a: boolean) => (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" fill={a ? "currentColor" : "none"}
-        stroke={a ? "none" : "currentColor"} strokeWidth={1.8} strokeLinecap="round">
-        <path d="M12 21s-7-4.3-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 12c0 4.7-7 9-7 9Z" />
-      </svg>
-    ),
+    d: "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z",
   },
   {
     to: "/report",
     label: "리포트",
-    icon: (a: boolean) => (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none"
-        stroke="currentColor" strokeWidth={a ? 2.2 : 1.8} strokeLinecap="round">
-        <path d="M4 20V10l8-6 8 6v10" />
-        <path d="M9 20v-6h6v6" />
-        <polyline points="4,14 9,10 13,13 20,8" strokeWidth={a ? 2.2 : 1.8} />
-      </svg>
-    ),
+    d: "M6 20v-6M12 20V4M18 20v-10",
   },
   {
     to: "/profile",
     label: "마이",
-    icon: (a: boolean) => (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none"
-        stroke="currentColor" strokeWidth={a ? 2.2 : 1.8} strokeLinecap="round">
-        <circle cx="12" cy="8" r="4" />
-        <path d="M5 20a7 7 0 0 1 14 0" />
-      </svg>
-    ),
+    d: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0",
   },
 ];
 
 export function BottomNav() {
   return (
-    <nav className="absolute inset-x-0 bottom-0 z-20 border-t border-border bg-card/95 backdrop-blur-md">
-      <ul className="mx-auto flex max-w-[480px] items-stretch justify-around px-1 pb-[env(safe-area-inset-bottom)]">
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/98 backdrop-blur-md"
+      style={{ paddingBottom: "env(safe-area-inset-bottom, 8px)" }}
+    >
+      <ul className="mx-auto flex max-w-[480px] items-stretch justify-around">
         {tabs.map((t) => (
           <li key={t.to} className="flex-1">
             <NavLink
@@ -71,12 +43,27 @@ export function BottomNav() {
               end={t.to === "/"}
               className={({ isActive }) =>
                 cn(
-                  "flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-semibold transition-colors",
+                  "flex flex-col items-center gap-[3px] py-2.5 text-[10px] font-semibold transition-colors",
                   isActive ? "text-pink" : "text-tertiary",
                 )
               }
             >
-              {({ isActive }) => <>{t.icon(isActive)}{t.label}</>}
+              {({ isActive }) => (
+                <>
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="h-[22px] w-[22px]"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={isActive ? 2.4 : 1.8}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d={t.d} />
+                  </svg>
+                  {t.label}
+                </>
+              )}
             </NavLink>
           </li>
         ))}
