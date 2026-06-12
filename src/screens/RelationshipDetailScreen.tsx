@@ -22,8 +22,8 @@ const TRAITS_THEM = [{ label: "신중함", value: 82 }, { label: "독립성", va
 const RECENT_CARDS  = ["약속 30분 늦었어요", "생일을 축하했어요", "답장이 너무 느려요", "연락이 뜸해졌어요"];
 const RECENT_EMOJIS = ["🕐", "🎂", "💬", "💌"];
 
-function Accordion({ label, children, defaultOpen = false }: { label: string; children: React.ReactNode; defaultOpen?: boolean }) {
-  const [open, setOpen] = useState(defaultOpen);
+function Accordion({ label, children }: { label: string; children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
   return (
     <div className="rounded-xl bg-card border border-border overflow-hidden">
       <button
@@ -58,15 +58,15 @@ export default function RelationshipDetailScreen() {
         <div className="w-9" />
       </div>
 
-      {/* dual character hero — primary */}
+      {/* emotional hero — primary view */}
       <div
-        className="mx-5 mb-3 rounded-xl overflow-hidden border border-border p-4"
+        className="mx-5 mb-4 rounded-xl overflow-hidden border border-border"
         style={{ background: "linear-gradient(160deg, #1A1235 0%, #0E0B16 100%)" }}
       >
-        <div className="flex items-end justify-center gap-3">
-          {/* me */}
+        {/* two portraits + chemistry */}
+        <div className="flex items-end justify-center gap-3 pt-5 px-4">
           <div className="flex flex-col items-center gap-1.5 flex-1">
-            <div className="h-[88px] w-[88px] overflow-hidden rounded-xl bg-white ring-pink-neon">
+            <div className="h-[96px] w-[96px] overflow-hidden rounded-xl bg-white ring-pink-neon">
               <img
                 src={CHARACTERS[mockProfile.characterId].src}
                 alt="나"
@@ -76,20 +76,18 @@ export default function RelationshipDetailScreen() {
             <span className="text-xs font-bold text-pink">나</span>
           </div>
 
-          {/* chemistry */}
           <div className="flex flex-col items-center gap-1.5 pb-2 shrink-0">
-            <div className="flex h-[68px] w-[68px] items-center justify-center rounded-full border-4 border-pink bg-card shadow-glow-pink">
+            <div className="flex h-[72px] w-[72px] items-center justify-center rounded-full border-4 border-pink bg-card shadow-glow-pink">
               <div className="text-center">
-                <p className="text-[9px] text-secondary leading-none mb-0.5">케미</p>
+                <p className="text-[9px] text-secondary leading-none mb-0.5">우리 케미</p>
                 <p className="text-xl font-black text-grad-cta leading-none">87<span className="text-xs">%</span></p>
               </div>
             </div>
-            <Badge tone="pink">좋은 케미 💜</Badge>
+            <Badge tone="pink">잘 맞는 사이 💜</Badge>
           </div>
 
-          {/* them */}
           <div className="flex flex-col items-center gap-1.5 flex-1">
-            <div className="h-[88px] w-[88px] overflow-hidden rounded-xl bg-white ring-purple-neon">
+            <div className="h-[96px] w-[96px] overflow-hidden rounded-xl bg-white ring-purple-neon">
               <img
                 src={CHARACTERS[r.characterId].src}
                 alt={r.name}
@@ -100,17 +98,27 @@ export default function RelationshipDetailScreen() {
           </div>
         </div>
 
-        {/* MING one-liner */}
-        <div className="mt-3 flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2">
-          <MingGuide emotion="coach" size="xs" />
-          <p className="text-xs text-secondary leading-snug">
-            {r.name}은 표현은 적지만 관심은 꾸준해요. 짧게 먼저 연락해봐요 💜
-          </p>
+        {/* single emotional MING sentence */}
+        <div className="px-5 pt-4 pb-5">
+          <div className="flex items-start gap-3 rounded-xl bg-white/5 border border-white/8 px-4 py-3">
+            <MingGuide emotion="coach" size="xs" className="mt-0.5 shrink-0" />
+            <p className="text-sm text-primary leading-relaxed">
+              {r.name}은 표현은 적지만 관심은 꾸준해요.
+              <span className="text-pink font-semibold"> 먼저 다가가면 관계가 더 가까워질 거예요.</span>
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* quick message chips */}
+      {/* primary CTA — immediately after hero */}
       <div className="px-5 mb-4">
+        <button className="w-full rounded-full bg-grad-cta py-4 text-base font-bold text-white shadow-glow-cta active:scale-[0.98] transition">
+          🎴 상황카드 보내기
+        </button>
+      </div>
+
+      {/* quick message chips */}
+      <div className="px-5 mb-5">
         <div className="no-scrollbar flex gap-2 overflow-x-auto">
           {["안부 인사", "칭찬하기", "요즘 어때?", "함께 뭐할까?"].map((chip) => (
             <button
@@ -123,9 +131,14 @@ export default function RelationshipDetailScreen() {
         </div>
       </div>
 
-      {/* accordions — all secondary */}
+      {/* soft divider */}
+      <div className="px-5 mb-3">
+        <p className="text-xs font-semibold text-tertiary">더 알아보기</p>
+      </div>
+
+      {/* secondary — accordions with relationship language */}
       <div className="px-5 space-y-2">
-        <Accordion label="관계 상태">
+        <Accordion label="우리 사이 들여다보기">
           <div className="grid grid-cols-5 gap-2 pt-1">
             {METRICS.map((m) => (
               <div key={m.key} className="flex flex-col items-center gap-1">
@@ -150,7 +163,7 @@ export default function RelationshipDetailScreen() {
           </div>
         </Accordion>
 
-        <Accordion label="성향 비교">
+        <Accordion label="우리의 다른 점">
           <div className="grid grid-cols-2 gap-4 pt-1">
             <div>
               <p className="text-xs text-pink font-semibold mb-2">♥ 나 vs {r.name}</p>
@@ -182,7 +195,7 @@ export default function RelationshipDetailScreen() {
           </div>
         </Accordion>
 
-        <Accordion label="최근 상황카드">
+        <Accordion label="최근 나눈 이야기">
           <div className="no-scrollbar flex gap-2 overflow-x-auto pt-1">
             {RECENT_CARDS.map((card, i) => (
               <div key={i} className="shrink-0 rounded-lg bg-bg border border-border p-3 w-[100px]">
@@ -193,33 +206,32 @@ export default function RelationshipDetailScreen() {
           </div>
         </Accordion>
 
-        {/* chat unlock — compact */}
+        {/* relationship growth — not game unlock */}
         <div className="rounded-xl bg-card border border-border p-4">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-bold text-primary">채팅 해금</p>
+            <p className="text-sm font-bold text-primary">관계 성장 현황</p>
             {r.chatUnlocked
-              ? <Badge tone="green">해금!</Badge>
-              : <span className="text-xs text-tertiary">{r.exchangeCount}/20 교환</span>
+              ? <Badge tone="green">대화 가능</Badge>
+              : <span className="text-xs text-tertiary">{r.exchangeCount}/20 질문 교환</span>
             }
           </div>
           <ProgressBar value={(r.exchangeCount / 20) * 100} tone="pink" />
+          <p className="mt-1.5 text-xs text-tertiary">
+            {r.chatUnlocked
+              ? "서로를 충분히 이해했어요. 이제 대화를 시작할 수 있어요."
+              : "질문을 주고받을수록 관계가 가까워져요."
+            }
+          </p>
         </div>
 
-        {/* premium — compact */}
+        {/* premium */}
         <div className="rounded-xl bg-card border border-border px-4 py-3 flex items-center justify-between">
           <div>
-            <p className="text-sm font-bold text-primary">심층 궁합 리포트</p>
-            <p className="text-xs text-tertiary mt-0.5">AI가 더 깊이 분석해줄게요</p>
+            <p className="text-sm font-bold text-primary">더 깊이 알고 싶다면</p>
+            <p className="text-xs text-tertiary mt-0.5">AI가 우리 관계를 더 자세히 분석해줄게요</p>
           </div>
           <PremiumLabel />
         </div>
-      </div>
-
-      {/* sticky CTA */}
-      <div className="px-5 mt-5">
-        <button className="w-full rounded-full bg-grad-cta py-4 text-base font-bold text-white shadow-glow-cta active:scale-[0.98] transition">
-          🎴 상황카드 보내기
-        </button>
       </div>
     </div>
   );
