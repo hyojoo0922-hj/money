@@ -1,15 +1,10 @@
 import { Link } from "react-router-dom";
 import { MingGuide } from "@/components/ming/MingGuide";
 import { ProgressBar } from "@/components/ui/ProgressBar";
+import { ArchetypeCard } from "@/components/ui/ArchetypeCard";
 import { CHARACTERS } from "@/lib/assets";
-import { mockProfile, mockPrimaryArchetype, mockDailyCards } from "@/data/mock";
-
-const quickActions = [
-  { to: "/situations",    emoji: "🎴", label: "상황카드",  color: "bg-purple/80" },
-  { to: "/relationships", emoji: "💞", label: "관계 보기", color: "bg-pink/80"   },
-  { to: "/report",        emoji: "📊", label: "리포트",   color: "bg-blue/80"   },
-  { to: "/profile",       emoji: "✨", label: "내 성향",  color: "bg-yellow/80" },
-];
+import { mockProfile, mockPrimaryArchetype, mockDailyCards, mockRecommendations } from "@/data/mock";
+import { Badge } from "@/components/ui/Badge";
 
 export default function HomeScreen() {
   const unanswered = mockDailyCards.filter((c) => !c.answered).length;
@@ -25,27 +20,29 @@ export default function HomeScreen() {
         </button>
       </div>
 
-      {/* TODAY'S ME — character evolution hero */}
+      {/* TODAY'S ME — archetype image dominates */}
       <div
         className="mx-5 mb-4 relative overflow-hidden rounded-xl border border-purple/30"
-        style={{ background: "linear-gradient(135deg, #2D1B6E 0%, #1A0E3D 60%, #0E0B16 100%)", minHeight: "200px" }}
+        style={{
+          background: "linear-gradient(135deg, #2D1B6E 0%, #1A0E3D 60%, #0E0B16 100%)",
+          minHeight: "220px",
+        }}
       >
-        {/* text left */}
-        <div className="relative z-10 p-5 max-w-[58%]">
+        {/* left: text */}
+        <div className="relative z-10 p-5" style={{ maxWidth: "54%" }}>
           <p className="text-xs font-semibold text-purple mb-2">오늘의 나</p>
-          {/* archetype as title */}
           <p className="text-2xl font-black text-grad-cta leading-tight">
             {mockPrimaryArchetype.emoji} {mockPrimaryArchetype.name_ko}
           </p>
           <p className="text-xs text-secondary mt-1.5 leading-snug">
             답장이 늦으면 머릿속이 바빠지는 사람
           </p>
-          {/* chemistry as supporting line */}
+          {/* chemistry supporting line */}
           <div className="mt-3 flex items-center gap-2">
             <span className="text-sm font-bold text-primary">케미 88%</span>
-            <span className="text-xs text-green">↑ 6%</span>
+            <span className="text-xs text-green font-semibold">↑ 6%</span>
           </div>
-          <ProgressBar value={88} tone="cta" height="h-1" className="mt-1.5 max-w-[120px]" />
+          <ProgressBar value={88} tone="cta" height="h-1" className="mt-1.5" style={{ maxWidth: "110px" }} />
           {/* MING tip */}
           <div className="mt-3 flex items-center gap-2">
             <MingGuide emotion="pointing" size="xs" />
@@ -53,18 +50,20 @@ export default function HomeScreen() {
           </div>
         </div>
 
-        {/* character portrait — dominant right anchor */}
-        <div className="absolute bottom-0 right-0 h-full flex items-end">
+        {/* right: archetype character image — dominant anchor */}
+        <div className="absolute bottom-0 right-0 top-0 flex items-end justify-end pr-2">
+          {/* placeholder: user's base portrait. Replaced by archetype-specific image in Phase 5. */}
           <img
             src={CHARACTERS[mockProfile.characterId].src}
-            alt="오늘의 나"
-            className="h-[190px] w-auto object-contain object-bottom"
-            style={{ maxWidth: "160px" }}
+            alt={mockPrimaryArchetype.name_ko}
+            className="object-contain object-bottom"
+            style={{ height: "210px", width: "auto", maxWidth: "170px" }}
+            draggable={false}
           />
         </div>
       </div>
 
-      {/* primary CTA */}
+      {/* ONE primary CTA */}
       {unanswered > 0 ? (
         <Link
           to="/situations"
@@ -91,19 +90,37 @@ export default function HomeScreen() {
         </Link>
       )}
 
-      {/* quick actions */}
-      <div className="px-5">
-        <div className="grid grid-cols-4 gap-3">
-          {quickActions.map((a) => (
+      {/* recommended relationships carousel */}
+      <div className="mb-2">
+        <div className="flex items-center justify-between px-5 mb-3">
+          <h2 className="text-sm font-extrabold text-primary">연결해볼 사람</h2>
+          <Link to="/relationships" className="text-xs font-semibold text-purple">더보기 ›</Link>
+        </div>
+        <div className="no-scrollbar flex gap-3 overflow-x-auto pl-5 pr-3">
+          {mockRecommendations.map((rec) => (
             <Link
-              key={a.label}
-              to={a.to}
-              className="flex flex-col items-center gap-1.5 active:scale-[0.95] transition"
+              key={rec.id}
+              to="/relationships"
+              className="shrink-0 w-[150px] rounded-xl bg-card border border-border overflow-hidden active:scale-[0.97] transition"
             >
-              <div className={`h-12 w-12 rounded-xl ${a.color} flex items-center justify-center text-xl`}>
-                {a.emoji}
+              <div className="relative h-[140px] bg-gradient-to-b from-[#1A1235] to-[#0E0B16]">
+                <div className="absolute top-2 left-2 z-10">
+                  <Badge tone="pink">추천</Badge>
+                </div>
+                <div className="absolute top-2 right-2 z-10 flex items-center gap-0.5 rounded-full bg-black/50 px-2 py-0.5">
+                  <span className="text-pink text-xs">♥</span>
+                  <span className="text-xs font-bold text-white">91%</span>
+                </div>
+                <img
+                  src={CHARACTERS[rec.characterId].src}
+                  alt=""
+                  className="h-full w-full object-contain object-top"
+                />
               </div>
-              <p className="text-[11px] font-semibold text-secondary text-center leading-tight">{a.label}</p>
+              <div className="p-2.5">
+                <p className="font-bold text-primary text-sm">{rec.name}</p>
+                <p className="text-[11px] text-secondary mt-0.5 leading-tight">{rec.reason}</p>
+              </div>
             </Link>
           ))}
         </div>
