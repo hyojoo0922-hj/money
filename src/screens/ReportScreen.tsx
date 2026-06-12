@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { MingInsightCard } from "@/components/ming/MingInsightCard";
+import { MingGuide } from "@/components/ming/MingGuide";
 import { Sparkline } from "@/components/ui/Sparkline";
 import { CHARACTERS, type CharacterId } from "@/lib/assets";
+import { mockProfile, mockPrimaryArchetype, mockEvolutionHistory } from "@/data/mock";
 import { cn } from "@/lib/cn";
 
 const CHANGE_STATS = [
@@ -48,9 +49,84 @@ export default function ReportScreen() {
 
   return (
     <div className="pb-4">
-      {/* header */}
-      <div className="flex items-center justify-between px-5 pt-5 pb-3">
-        <p className="text-lg font-extrabold text-primary">MINGLEY 리포트</p>
+
+      {/* ── ARCHETYPE HERO — primary element ── */}
+      <div
+        className="mx-5 mt-5 mb-4 relative overflow-hidden rounded-xl border border-purple/30"
+        style={{ background: "linear-gradient(135deg, #2D1B6E 0%, #1A0E3D 60%, #0E0B16 100%)", minHeight: "160px" }}
+      >
+        <div className="relative z-10 p-5 max-w-[62%]">
+          <p className="text-xs font-semibold text-purple mb-1">이번 주의 나</p>
+          <p className="text-2xl font-black text-grad-cta leading-tight">
+            {mockPrimaryArchetype.emoji} {mockPrimaryArchetype.name_ko}
+          </p>
+          <p className="text-xs text-secondary mt-1.5 leading-snug">
+            답장이 늦으면 머릿속이 바빠지는 사람
+          </p>
+          <div className="mt-3 flex items-center gap-2">
+            <MingGuide emotion="reportWriting" size="xs" />
+            <p className="text-xs text-secondary leading-snug">
+              공감 표현이 눈에 띄게 늘었어 ✨
+            </p>
+          </div>
+        </div>
+        <div className="absolute bottom-0 right-0 h-full flex items-end">
+          <img
+            src={CHARACTERS[mockProfile.characterId].src}
+            alt="이번 주의 나"
+            className="h-[150px] w-auto object-contain object-bottom"
+            style={{ maxWidth: "140px" }}
+          />
+        </div>
+      </div>
+
+      {/* ── EVOLUTION TIMELINE — open by default ── */}
+      <div className="px-5 mb-4">
+        <p className="text-xs font-semibold text-secondary mb-3">나의 변화 히스토리</p>
+        <div className="flex items-center gap-2">
+          {mockEvolutionHistory.map((e, i) => (
+            <div key={e.id} className="flex items-center gap-2">
+              <div className="flex flex-col items-center">
+                <div className="w-[72px] aspect-[3/4] overflow-hidden rounded-lg bg-white ring-1 ring-border">
+                  <img
+                    src={CHARACTERS[e.characterId].src}
+                    alt=""
+                    className="h-full w-full object-contain object-top"
+                  />
+                </div>
+                <p className="text-[10px] font-bold text-primary mt-1 text-center leading-tight">
+                  {e.archetypeName}
+                </p>
+                <p className="text-[9px] text-tertiary text-center">{e.date}</p>
+              </div>
+              {i < mockEvolutionHistory.length - 1 && (
+                <span className="text-tertiary text-base shrink-0">→</span>
+              )}
+            </div>
+          ))}
+          {/* current — highlighted */}
+          <div className="flex items-center gap-2">
+            <span className="text-tertiary text-base shrink-0">→</span>
+            <div className="flex flex-col items-center">
+              <div className="w-[72px] aspect-[3/4] overflow-hidden rounded-lg bg-white ring-2 ring-pink shadow-glow-pink">
+                <img
+                  src={CHARACTERS[mockProfile.characterId].src}
+                  alt=""
+                  className="h-full w-full object-contain object-top"
+                />
+              </div>
+              <p className="text-[10px] font-bold text-pink mt-1 text-center leading-tight">
+                {mockPrimaryArchetype.name_ko}
+              </p>
+              <p className="text-[9px] text-pink text-center">지금</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* period toggle */}
+      <div className="flex items-center justify-between px-5 mb-4">
+        <p className="text-sm font-extrabold text-primary">MINGLEY 리포트</p>
         <div className="flex rounded-full bg-card border border-border p-1 gap-1">
           {(["주간", "월간"] as const).map((p) => (
             <button
@@ -66,19 +142,9 @@ export default function ReportScreen() {
         </div>
       </div>
 
-      {/* MING insight — primary message */}
+      {/* ── 4 change-stat cards — below timeline ── */}
       <div className="px-5 mb-4">
-        <MingInsightCard
-          emotion="reportWriting"
-          title="이번 주 MING의 분석"
-          message="공감 표현이 눈에 띄게 늘었어. 상대를 이해하려는 노력이 관계 만족도를 높이고 있어! ✨"
-          ai
-        />
-      </div>
-
-      {/* 4 change stat cards — primary data */}
-      <div className="px-5 mb-4">
-        <p className="text-xs font-semibold text-secondary mb-2">나의 변화</p>
+        <p className="text-xs font-semibold text-secondary mb-2">이번 주 변화</p>
         <div className="grid grid-cols-2 gap-2">
           {CHANGE_STATS.map((s) => (
             <div key={s.label} className="rounded-xl bg-card border border-border p-3">
@@ -94,7 +160,7 @@ export default function ReportScreen() {
         </div>
       </div>
 
-      {/* ranking — visible by default */}
+      {/* ranking */}
       <div className="px-5 mb-4">
         <div className="rounded-xl bg-card border border-border p-4">
           <p className="text-sm font-bold text-primary mb-3">관계 랭킹 TOP 5</p>
@@ -118,12 +184,8 @@ export default function ReportScreen() {
       <div className="px-5 space-y-2">
         <Accordion label="관계 온도 변화">
           <div className="flex items-center gap-3 text-[10px] mb-2 mt-2">
-            <span className="flex items-center gap-1">
-              <span className="inline-block h-2 w-4 rounded-full bg-pink" />민지
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="inline-block h-2 w-4 rounded-full bg-blue" />서준
-            </span>
+            <span className="flex items-center gap-1"><span className="inline-block h-2 w-4 rounded-full bg-pink" />민지</span>
+            <span className="flex items-center gap-1"><span className="inline-block h-2 w-4 rounded-full bg-blue" />서준</span>
           </div>
           <Sparkline values={TEMP_CHART_VALS.me}    width={260} height={50} color="#FF4FDB" />
           <Sparkline values={TEMP_CHART_VALS.other} width={260} height={50} color="#3882F6" />
