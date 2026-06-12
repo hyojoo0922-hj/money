@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base dark reset ───────────────────────────────── */
+:root { color-scheme: dark; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: #0E0B16;
+  color: #FFFFFF;
+  font-family: "Pretendard", "SF Pro Display", Inter, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Scrollbar suppression ─────────────────────────── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Utility: gradient text ────────────────────────── */
+.text-grad-cta {
+  background: linear-gradient(135deg, #FF4FDB 0%, #7B61FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.text-grad-cool {
+  background: linear-gradient(135deg, #7B61FF 0%, #3882F6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Neon ring — avatar / badge ────────────────────── */
+.ring-pink-neon  { box-shadow: 0 0 0 2px #FF4FDB, 0 0 12px rgba(255,79,219,0.45); }
+.ring-purple-neon { box-shadow: 0 0 0 2px #7B61FF, 0 0 12px rgba(123,97,255,0.45); }
+
+/* ── Card glass border ─────────────────────────────── */
+.card-border {
+  border: 1px solid #2A263B;
+  background: #1F1B2E;
+}
+
+/* ── Sparkline / graph lines ───────────────────────── */
+.sparkline-path { stroke: #FF4FDB; fill: none; stroke-width: 2; stroke-linecap: round; }
+.sparkline-dot  { fill: #FF4FDB; }
+
+/* ── Reduced motion ────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
