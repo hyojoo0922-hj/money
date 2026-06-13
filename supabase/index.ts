@@ -16,7 +16,7 @@
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import OpenAI from "https://esm.sh/openai@4";
-import { ARCHETYPE_VISUAL_RULES, buildArchetypePrompt } from "../../src/lib/archetypeVisualRules.ts";
+import { ARCHETYPE_VISUAL_RULES, buildArchetypePrompt } from "./archetypeVisualRules.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin":  "*",
