@@ -9,8 +9,6 @@
  *   - User is not authenticated
  *   - Scores table is empty
  *   - Any fetch error occurs
- *
- * UI files import only { usePersonalityScores } — never touch score math.
  */
 
 import { useState, useEffect } from "react";
@@ -26,9 +24,9 @@ const DEFAULT: ActiveArchetype = {
 };
 
 interface UsePersonalityScoresResult {
-  archetype:  ActiveArchetype;
-  scores:     TraitScoreMap;
-  loading:    boolean;
+  archetype: ActiveArchetype;
+  scores:    TraitScoreMap;
+  loading:   boolean;
 }
 
 export function usePersonalityScores(): UsePersonalityScoresResult {
@@ -40,7 +38,6 @@ export function usePersonalityScores(): UsePersonalityScoresResult {
     let cancelled = false;
 
     async function load() {
-      // Graceful degradation: no Supabase → keep defaults
       if (!supabase) {
         setLoading(false);
         return;
@@ -66,13 +63,11 @@ export function usePersonalityScores(): UsePersonalityScoresResult {
 
         if (cancelled) return;
 
-        // Build TraitScoreMap from DB rows
         const scoreMap: TraitScoreMap = {};
         for (const row of data) {
           scoreMap[row.trait_key] = row.score;
         }
 
-        // Delegate to pure engine — no math here
         const resolved = resolveArchetype(scoreMap);
 
         setScores(scoreMap);
