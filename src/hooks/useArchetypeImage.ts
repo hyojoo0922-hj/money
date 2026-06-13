@@ -100,8 +100,11 @@ export function useArchetypeImage(
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("not_authenticated");
 
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      if (!supabaseUrl) throw new Error("missing_supabase_url");
+
       const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-archetype-image`,
+        `${supabaseUrl}/functions/v1/generate-archetype-image`,
         {
           method:  "POST",
           headers: {
@@ -136,3 +139,4 @@ export function useArchetypeImage(
 
   return { src, status, ticketsRemaining, triggerGeneration, errorMessage };
 }
+
