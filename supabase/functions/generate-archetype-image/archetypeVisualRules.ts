@@ -1,4 +1,4 @@
-export interface ArchetypeVisualRule {
+ArchetypeVisualRule {
   archetype_key:  string;
   name_ko:        string;
   pose:           string;
