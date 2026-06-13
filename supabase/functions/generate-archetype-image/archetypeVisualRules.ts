@@ -1,27 +1,14 @@
-/**
- * MINGLEY Archetype Visual Rules — Phase 3-3
- *
- * Structured prompt specifications for OpenAI image generation.
- * One rule set per archetype_key. Used by generate-archetype-image Edge Function.
- *
- * Identity rules (never change across archetypes):
- * - Same face, same body proportions, same art style as base character
- * - Stylized 3D semi-realistic game-character aesthetic
- * - Portrait orientation, character fills 60–80% of canvas height
- * - Transparent PNG preferred — background as floating props only
- */
-
 export interface ArchetypeVisualRule {
-  archetype_key:   string;
-  name_ko:         string;
-  pose:            string;
-  expression:      string;
-  outfit:          string;
-  accessories:     string;
-  background:      string;
-  color_accents:   string;
-  mood:            string;
-  prompt_version:  string;
+  archetype_key:  string;
+  name_ko:        string;
+  pose:           string;
+  expression:     string;
+  outfit:         string;
+  accessories:    string;
+  background:     string;
+  color_accents:  string;
+  mood:           string;
+  prompt_version: string;
 }
 
 export const ARCHETYPE_VISUAL_RULES: Record<string, ArchetypeVisualRule> = {
@@ -37,7 +24,6 @@ export const ARCHETYPE_VISUAL_RULES: Record<string, ArchetypeVisualRule> = {
     mood:           "anxious anticipation, hyper-alert, isolated, can't put the phone down",
     prompt_version: "v1",
   },
-
   human_excel: {
     archetype_key:  "human_excel",
     name_ko:        "인간엑셀",
@@ -50,7 +36,6 @@ export const ARCHETYPE_VISUAL_RULES: Record<string, ArchetypeVisualRule> = {
     mood:           "controlled, efficient, quietly satisfied, slightly superior — completely in their element",
     prompt_version: "v1",
   },
-
   emotion_locomotive: {
     archetype_key:  "emotion_locomotive",
     name_ko:        "감정폭주기관차",
@@ -63,7 +48,6 @@ export const ARCHETYPE_VISUAL_RULES: Record<string, ArchetypeVisualRule> = {
     mood:           "passionate, overwhelming, magnetic, consuming — everything felt at maximum",
     prompt_version: "v1",
   },
-
   relationship_weather_caster: {
     archetype_key:  "relationship_weather_caster",
     name_ko:        "관계기상캐스터",
@@ -78,11 +62,6 @@ export const ARCHETYPE_VISUAL_RULES: Record<string, ArchetypeVisualRule> = {
   },
 };
 
-/**
- * Build the full OpenAI image prompt for a given archetype.
- * @param rule       The archetype visual rule
- * @param characterId The user's base character (used in style anchor only)
- */
 export function buildArchetypePrompt(
   rule: ArchetypeVisualRule,
   _characterId: string,
@@ -100,3 +79,4 @@ export function buildArchetypePrompt(
     `Portrait orientation. Character fills approximately 70% of the canvas height. Soft studio lighting. Transparent or minimal background. High quality, consistent with the reference character's art direction.`,
   ].join(" ");
 }
+
