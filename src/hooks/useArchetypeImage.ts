@@ -1,5 +1,3 @@
-src/hooks/useArchetypeImage.ts
-
 /**
  * useArchetypeImage — Phase 3-3
  *
