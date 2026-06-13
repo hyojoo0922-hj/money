@@ -3,10 +3,13 @@ import { MingGuide } from "@/components/ming/MingGuide";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Badge } from "@/components/ui/Badge";
 import { CHARACTERS } from "@/lib/assets";
-import { mockProfile, mockPrimaryArchetype, mockDailyCards, mockRecommendations } from "@/data/mock";
+import { mockProfile, mockDailyCards, mockRecommendations } from "@/data/mock";
+import { usePersonalityScores } from "@/hooks/usePersonalityScores";
 
 export default function HomeScreen() {
   const unanswered = mockDailyCards.filter((c) => !c.answered).length;
+  // Live archetype — falls back to 답장망상가 if Supabase unavailable
+  const { archetype } = usePersonalityScores();
 
   return (
     <div className="pb-4">
@@ -30,8 +33,9 @@ export default function HomeScreen() {
         {/* left: text */}
         <div className="relative z-10 p-5" style={{ maxWidth: "54%" }}>
           <p className="text-xs font-semibold text-purple mb-2">오늘의 나</p>
+          {/* live archetype name + emoji */}
           <p className="text-2xl font-black text-grad-cta leading-tight">
-            {mockPrimaryArchetype.emoji} {mockPrimaryArchetype.name_ko}
+            {archetype.emoji} {archetype.name_ko}
           </p>
           <p className="text-xs text-secondary mt-1.5 leading-snug">
             답장이 늦으면 머릿속이 바빠지는 사람
@@ -47,11 +51,11 @@ export default function HomeScreen() {
           </div>
         </div>
 
-        {/* right: character portrait — dominant anchor */}
+        {/* right: character portrait */}
         <div className="absolute bottom-0 right-0 top-0 flex items-end justify-end pr-2">
           <img
             src={CHARACTERS[mockProfile.characterId].src}
-            alt={mockPrimaryArchetype.name_ko}
+            alt={archetype.name_ko}
             className="object-contain object-bottom"
             style={{ height: "210px", width: "auto", maxWidth: "170px" }}
             draggable={false}
