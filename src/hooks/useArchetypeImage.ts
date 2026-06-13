@@ -16,7 +16,6 @@ import { CHARACTERS, type CharacterId } from "@/lib/assets";
 export type GenerationStatus = "idle" | "pending" | "ready" | "failed" | "no_tickets";
 
 interface UseArchetypeImageResult {
-  /** Image src to render — evolved PNG if ready, base character otherwise */
   src:               string;
   status:            GenerationStatus;
   ticketsRemaining:  number;
@@ -35,7 +34,7 @@ export function useArchetypeImage(
   const [ticketsRemaining, setTicketsRemaining] = useState<number>(0);
   const [errorMessage,     setErrorMessage]     = useState<string | null>(null);
 
-  // ── Load cache + ticket balance on mount ────────────────────────────────
+  // ── Load cache + ticket balance on mount ──────────────────────────────
   useEffect(() => {
     let cancelled = false;
 
@@ -88,7 +87,7 @@ export function useArchetypeImage(
     return () => { cancelled = true; };
   }, [characterId, archetypeKey]);
 
-  // ── Trigger generation ────────────────────────────────────────────────
+  // ── Trigger generation ─────────────────────────────────────────────────
   async function triggerGeneration() {
     if (!supabase) return;
     if (status === "pending" || status === "ready") return;
@@ -97,43 +96,58 @@ export function useArchetypeImage(
     setErrorMessage(null);
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("not_authenticated");
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("not_authenticated");
 
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      if (!supabaseUrl) throw new Error("missing_supabase_url");
-
-      const res = await fetch(
-        `${supabaseUrl}/functions/v1/generate-archetype-image`,
+      // Use supabase.functions.invoke — no manual URL or Authorization header needed
+      const { data, error } = await supabase.functions.invoke(
+        "generate-archetype-image",
         {
-          method:  "POST",
-          headers: {
-            "Content-Type":  "application/json",
-            "Authorization": `Bearer ${session.access_token}`,
+          body: {
+            user_id:       user.id,
+            character_id:  characterId,
+            archetype_key: archetypeKey,
           },
-          body: JSON.stringify({ character_id: characterId, archetype_key: archetypeKey }),
         },
       );
 
-      const data = await res.json();
+      if (error) {
+        // supabase.functions.invoke throws on network error;
+        // HTTP error codes come back as error.context.status
+        const httpStatus = (error as any)?.context?.status ?? 0;
 
-      if (res.status === 200 && data.image_url) {
+        if (httpStatus === 403) {
+          setStatus("no_tickets");
+          setTicketsRemaining(0);
+          return;
+        }
+
+        if (httpStatus === 202) {
+          setStatus("pending");
+          return;
+        }
+
+        throw error;
+      }
+
+      if (data?.status === "ready" && data?.image_url) {
         setSrc(data.image_url);
         setStatus("ready");
         setTicketsRemaining((prev) => Math.max(0, prev - 1));
-      } else if (res.status === 202) {
-        setStatus("pending");
-      } else if (res.status === 403) {
-        setStatus("no_tickets");
-        setTicketsRemaining(0);
-      } else {
-        // generation_failed — ticket NOT deducted
-        setStatus("failed");
-        setErrorMessage("생성에 실패했어. 티켓은 차감되지 않았어.");
+        return;
       }
+
+      if (data?.status === "pending") {
+        setStatus("pending");
+        return;
+      }
+
+      // Unexpected response — treat as failure, ticket not deducted
+      throw new Error(data?.error ?? "unexpected_response");
+
     } catch {
       setStatus("failed");
-      setErrorMessage("연결이 끊겼어. 잠시 후 다시 시도해봐.");
+      setErrorMessage("생성에 실패했어. 티켓은 차감되지 않았어.");
     }
   }
 
