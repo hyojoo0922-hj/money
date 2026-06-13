@@ -8,6 +8,7 @@ import { MingGuide } from "@/components/ming/MingGuide";
 import { ArchetypeCard } from "@/components/ui/ArchetypeCard";
 import { mockProfile, mockTopTraits, mockEvolutionHistory } from "@/data/mock";
 import { usePersonalityScores } from "@/hooks/usePersonalityScores";
+import { useArchetypeImage } from "@/hooks/useArchetypeImage";
 import { cn } from "@/lib/cn";
 
 const DNA_TRAITS = [
@@ -48,6 +49,11 @@ export default function ProfileScreen() {
   const [mingExpanded, setMingExpanded] = useState(false);
   // Live archetype — falls back to 답장망상가 if Supabase unavailable
   const { archetype } = usePersonalityScores();
+  // Evolved character image — falls back to base character if not generated yet
+  const { src: evolutionSrc, status: genStatus, ticketsRemaining, triggerGeneration, errorMessage } = useArchetypeImage(
+    mockProfile.characterId,
+    archetype.key,
+  );
 
   return (
     <div className="pb-4">
@@ -63,14 +69,20 @@ export default function ProfileScreen() {
             style={{ width: "140px", height: "187px" }}
           >
             <img
-              src={CHARACTERS[mockProfile.characterId].src}
+              src={evolutionSrc}
               alt={mockProfile.displayName}
               className="h-full w-full object-contain object-top"
               draggable={false}
             />
+            {/* shimmer ring when generation is pending */}
+            {genStatus === "pending" && (
+              <div className="absolute inset-0 flex items-end justify-center pb-2 bg-purple/10 rounded-xl">
+                <span className="text-[10px] font-bold text-purple bg-card/80 px-2 py-0.5 rounded-full">진화 중… ✨</span>
+              </div>
+            )}
           </div>
         </div>
-        {/* live archetype as screen title */}
+        {/* live archetype as screen title */
         <div className="text-center px-5 pt-3 pb-5">
           <p className="text-sm text-secondary">{mockProfile.displayName}</p>
           <p className="text-2xl font-black text-grad-cta leading-tight mt-0.5">
@@ -82,6 +94,37 @@ export default function ProfileScreen() {
             <span className="text-xs text-secondary">· 나답게 성장 중 ✨</span>
           </div>
         </div>
+      </div>
+
+      {/* GENERATION CTA */}
+      <div className="px-5 mt-3 mb-2">
+        {genStatus === "ready" ? null :
+         genStatus === "pending" ? (
+          <div className="flex items-center justify-center gap-2 rounded-xl bg-card border border-purple/20 py-3">
+            <span className="text-sm animate-pulse">✨</span>
+            <p className="text-sm font-semibold text-purple">진화 중… 잠시만 기다려줘</p>
+          </div>
+        ) : genStatus === "no_tickets" ? (
+          <div className="rounded-xl bg-card border border-border px-4 py-3 text-center">
+            <p className="text-xs text-secondary">티켓이 없어</p>
+            <p className="text-xs text-tertiary mt-0.5">레벨 5에서 무료 진화가 가능해</p>
+          </div>
+        ) : (
+          <div>
+            <button
+              onClick={triggerGeneration}
+              className="w-full rounded-full bg-grad-cta py-3.5 text-sm font-bold text-white shadow-glow-cta active:scale-[0.98] transition"
+            >
+              🎟️ 지금 모습 생성하기
+              {ticketsRemaining > 0 && (
+                <span className="ml-2 text-white/70 text-xs">({ticketsRemaining}장 남음)</span>
+              )}
+            </button>
+            {errorMessage && (
+              <p className="mt-2 text-center text-xs text-yellow">{errorMessage}</p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* EVOLUTION HISTORY — open by default, horizontal swipe */}
@@ -105,7 +148,7 @@ export default function ProfileScreen() {
           <div className="flex items-center gap-3 shrink-0">
             <span className="text-tertiary text-base shrink-0 mt-[-24px]">→</span>
             <ArchetypeCard
-              src={CHARACTERS[mockProfile.characterId].src}
+              src={evolutionSrc}
               name={archetype.name_ko}
               active
               size="lg"
