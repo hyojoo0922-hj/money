@@ -139,4 +139,3 @@ export function useArchetypeImage(
 
   return { src, status, ticketsRemaining, triggerGeneration, errorMessage };
 }
-

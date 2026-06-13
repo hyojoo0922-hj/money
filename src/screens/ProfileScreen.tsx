@@ -50,10 +50,13 @@ export default function ProfileScreen() {
   // Live archetype — falls back to 답장망상가 if Supabase unavailable
   const { archetype } = usePersonalityScores();
   // Evolved character image — falls back to base character if not generated yet
-  const { src: evolutionSrc, status: genStatus, ticketsRemaining, triggerGeneration, errorMessage } = useArchetypeImage(
-    mockProfile.characterId,
-    archetype.key,
-  );
+  const {
+    src: evolutionSrc,
+    status: genStatus,
+    ticketsRemaining,
+    triggerGeneration,
+    errorMessage,
+  } = useArchetypeImage(mockProfile.characterId, archetype.key);
 
   return (
     <div className="pb-4">
@@ -74,7 +77,6 @@ export default function ProfileScreen() {
               className="h-full w-full object-contain object-top"
               draggable={false}
             />
-            {/* shimmer ring when generation is pending */}
             {genStatus === "pending" && (
               <div className="absolute inset-0 flex items-end justify-center pb-2 bg-purple/10 rounded-xl">
                 <span className="text-[10px] font-bold text-purple bg-card/80 px-2 py-0.5 rounded-full">진화 중… ✨</span>
@@ -98,8 +100,7 @@ export default function ProfileScreen() {
 
       {/* GENERATION CTA */}
       <div className="px-5 mt-3 mb-2">
-        {genStatus === "ready" ? null :
-         genStatus === "pending" ? (
+        {genStatus === "ready" ? null : genStatus === "pending" ? (
           <div className="flex items-center justify-center gap-2 rounded-xl bg-card border border-purple/20 py-3">
             <span className="text-sm animate-pulse">✨</span>
             <p className="text-sm font-semibold text-purple">진화 중… 잠시만 기다려줘</p>
