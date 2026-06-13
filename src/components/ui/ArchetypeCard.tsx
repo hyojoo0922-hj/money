@@ -6,19 +6,19 @@
 import { cn } from "@/lib/cn";
 
 interface Props {
-  src: string;
-  name: string;
-  date?: string;
-  active?: boolean;        // current archetype — pink ring + "지금" label
-  size?: "sm" | "md" | "lg";
+  src:        string;
+  name:       string;
+  date?:      string;
+  active?:    boolean;
+  size?:      "sm" | "md" | "lg";
   className?: string;
-  onClick?: () => void;
+  onClick?:   () => void;
 }
 
 const sizes = {
-  sm:  { card: "w-[88px]",  img: "h-[117px]" },  // 88 × 117 — 3:4
-  md:  { card: "w-[110px]", img: "h-[147px]" },  // 110 × 147
-  lg:  { card: "w-[140px]", img: "h-[187px]" },  // 140 × 187
+  sm:  { card: "w-[88px]",  img: "h-[117px]" },
+  md:  { card: "w-[110px]", img: "h-[147px]" },
+  lg:  { card: "w-[140px]", img: "h-[187px]" },
 };
 
 export function ArchetypeCard({ src, name, date, active, size = "md", className, onClick }: Props) {
@@ -29,12 +29,10 @@ export function ArchetypeCard({ src, name, date, active, size = "md", className,
       onClick={onClick}
       role={onClick ? "button" : undefined}
     >
-      {/* image container — AI-asset ready */}
       <div
         className={cn(
           "w-full overflow-hidden rounded-xl",
           s.img,
-          // neutral dark gradient bg so transparent PNGs render on dark surfaces
           "bg-gradient-to-b from-[#1A1235] to-[#0E0B16]",
           active
             ? "ring-2 ring-pink shadow-glow-pink"
@@ -49,7 +47,6 @@ export function ArchetypeCard({ src, name, date, active, size = "md", className,
         />
       </div>
 
-      {/* archetype name */}
       <p className={cn(
         "text-center leading-tight font-bold",
         size === "sm" ? "text-[10px]" : "text-[11px]",
@@ -58,7 +55,6 @@ export function ArchetypeCard({ src, name, date, active, size = "md", className,
         {name}
       </p>
 
-      {/* date or "지금" */}
       {(date || active) && (
         <p className={cn(
           "text-[9px] text-center",
@@ -70,4 +66,3 @@ export function ArchetypeCard({ src, name, date, active, size = "md", className,
     </div>
   );
 }
- 
