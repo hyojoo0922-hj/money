@@ -6,7 +6,8 @@ import { PremiumLabel } from "@/components/ui/PremiumLock";
 import { Sparkline } from "@/components/ui/Sparkline";
 import { MingGuide } from "@/components/ming/MingGuide";
 import { ArchetypeCard } from "@/components/ui/ArchetypeCard";
-import { mockProfile, mockPrimaryArchetype, mockTopTraits, mockEvolutionHistory } from "@/data/mock";
+import { mockProfile, mockTopTraits, mockEvolutionHistory } from "@/data/mock";
+import { usePersonalityScores } from "@/hooks/usePersonalityScores";
 import { cn } from "@/lib/cn";
 
 const DNA_TRAITS = [
@@ -45,17 +46,18 @@ function Accordion({ label, children }: { label: string; children: React.ReactNo
 
 export default function ProfileScreen() {
   const [mingExpanded, setMingExpanded] = useState(false);
+  // Live archetype — falls back to 답장망상가 if Supabase unavailable
+  const { archetype } = usePersonalityScores();
 
   return (
     <div className="pb-4">
 
-      {/* ── CHARACTER PORTRAIT — large, full-width zone ── */}
+      {/* CHARACTER PORTRAIT — full-width hero */}
       <div
         className="relative overflow-hidden mx-5 mt-5 rounded-xl border border-purple/30"
         style={{ background: "linear-gradient(160deg, #1A1235 0%, #0E0B16 100%)", minHeight: "240px" }}
       >
         <div className="flex justify-center pt-5">
-          {/* AI-asset ready container — 140px wide, aspect-[3/4] */}
           <div
             className="overflow-hidden rounded-xl bg-gradient-to-b from-[#1A1235] to-[#0E0B16] ring-pink-neon"
             style={{ width: "140px", height: "187px" }}
@@ -68,11 +70,11 @@ export default function ProfileScreen() {
             />
           </div>
         </div>
-        {/* archetype as screen title */}
+        {/* live archetype as screen title */}
         <div className="text-center px-5 pt-3 pb-5">
           <p className="text-sm text-secondary">{mockProfile.displayName}</p>
           <p className="text-2xl font-black text-grad-cta leading-tight mt-0.5">
-            {mockPrimaryArchetype.emoji} {mockPrimaryArchetype.name_ko}
+            {archetype.emoji} {archetype.name_ko}
           </p>
           <div className="flex items-center justify-center gap-2 mt-1.5">
             <span className="text-lg font-black text-pink">92%</span>
@@ -82,13 +84,12 @@ export default function ProfileScreen() {
         </div>
       </div>
 
-      {/* ── EVOLUTION HISTORY — open by default, horizontal swipe ── */}
+      {/* EVOLUTION HISTORY — open by default, horizontal swipe */}
       <div className="px-5 mt-4 mb-4">
         <p className="text-xs font-semibold text-secondary mb-3">나의 변화 히스토리</p>
         <div className="no-scrollbar flex items-start gap-3 overflow-x-auto pb-1">
           {mockEvolutionHistory.map((e, i) => (
             <div key={e.id} className="flex items-center gap-3 shrink-0">
-              {/* lg size for profile — 140px image area */}
               <ArchetypeCard
                 src={CHARACTERS[e.characterId].src}
                 name={e.archetypeName}
@@ -100,12 +101,12 @@ export default function ProfileScreen() {
               )}
             </div>
           ))}
-          {/* current — active state */}
+          {/* current — active state with live archetype name */}
           <div className="flex items-center gap-3 shrink-0">
             <span className="text-tertiary text-base shrink-0 mt-[-24px]">→</span>
             <ArchetypeCard
               src={CHARACTERS[mockProfile.characterId].src}
-              name={mockPrimaryArchetype.name_ko}
+              name={archetype.name_ko}
               active
               size="lg"
             />
