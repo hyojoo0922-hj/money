@@ -1,3 +1,5 @@
+src/hooks/useArchetypeImage.ts
+
 /**
  * useArchetypeImage — Phase 3-3
  *
@@ -87,7 +89,7 @@ export function useArchetypeImage(
     return () => { cancelled = true; };
   }, [characterId, archetypeKey]);
 
-  // ── Trigger generation ─────────────────────────────────────────────────
+  // ── Trigger generation ────────────────────────────────────────────────
   async function triggerGeneration() {
     if (!supabase) return;
     if (status === "pending" || status === "ready") return;
@@ -99,7 +101,6 @@ export function useArchetypeImage(
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("not_authenticated");
 
-      // Use supabase.functions.invoke — no manual URL or Authorization header needed
       const { data, error } = await supabase.functions.invoke(
         "generate-archetype-image",
         {
@@ -112,21 +113,16 @@ export function useArchetypeImage(
       );
 
       if (error) {
-        // supabase.functions.invoke throws on network error;
-        // HTTP error codes come back as error.context.status
         const httpStatus = (error as any)?.context?.status ?? 0;
-
         if (httpStatus === 403) {
           setStatus("no_tickets");
           setTicketsRemaining(0);
           return;
         }
-
         if (httpStatus === 202) {
           setStatus("pending");
           return;
         }
-
         throw error;
       }
 
@@ -142,7 +138,6 @@ export function useArchetypeImage(
         return;
       }
 
-      // Unexpected response — treat as failure, ticket not deducted
       throw new Error(data?.error ?? "unexpected_response");
 
     } catch {
@@ -153,3 +148,4 @@ export function useArchetypeImage(
 
   return { src, status, ticketsRemaining, triggerGeneration, errorMessage };
 }
+
