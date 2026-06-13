@@ -82,7 +82,7 @@ export default function ProfileScreen() {
             )}
           </div>
         </div>
-        {/* live archetype as screen title */
+        {/* live archetype as screen title */}
         <div className="text-center px-5 pt-3 pb-5">
           <p className="text-sm text-secondary">{mockProfile.displayName}</p>
           <p className="text-2xl font-black text-grad-cta leading-tight mt-0.5">
