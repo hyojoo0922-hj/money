@@ -3,7 +3,8 @@ import { MingGuide } from "@/components/ming/MingGuide";
 import { Sparkline } from "@/components/ui/Sparkline";
 import { ArchetypeCard } from "@/components/ui/ArchetypeCard";
 import { CHARACTERS, type CharacterId } from "@/lib/assets";
-import { mockProfile, mockPrimaryArchetype, mockEvolutionHistory } from "@/data/mock";
+import { mockProfile, mockEvolutionHistory } from "@/data/mock";
+import { usePersonalityScores } from "@/hooks/usePersonalityScores";
 import { cn } from "@/lib/cn";
 
 const CHANGE_STATS = [
@@ -46,11 +47,13 @@ function Accordion({ label, children }: { label: string; children: React.ReactNo
 
 export default function ReportScreen() {
   const [period, setPeriod] = useState<"주간" | "월간">("주간");
+  // Live archetype — falls back to 답장망상가 if Supabase unavailable
+  const { archetype } = usePersonalityScores();
 
   return (
     <div className="pb-4">
 
-      {/* ── ARCHETYPE HERO — evolution primary element ── */}
+      {/* ARCHETYPE HERO */}
       <div
         className="mx-5 mt-5 mb-4 relative overflow-hidden rounded-xl border border-purple/30"
         style={{
@@ -58,11 +61,11 @@ export default function ReportScreen() {
           minHeight: "200px",
         }}
       >
-        {/* left: label + archetype name + MING */}
         <div className="relative z-10 p-5" style={{ maxWidth: "56%" }}>
           <p className="text-xs font-semibold text-purple mb-1">이번 주의 나</p>
+          {/* live archetype */}
           <p className="text-2xl font-black text-grad-cta leading-tight">
-            {mockPrimaryArchetype.emoji} {mockPrimaryArchetype.name_ko}
+            {archetype.emoji} {archetype.name_ko}
           </p>
           <p className="text-xs text-secondary mt-1.5 leading-snug">
             답장이 늦으면 머릿속이 바빠지는 사람
@@ -72,13 +75,10 @@ export default function ReportScreen() {
             <p className="text-xs text-secondary leading-snug">공감 표현이 눈에 띄게 늘었어 ✨</p>
           </div>
         </div>
-
-        {/* right: archetype character image — enlarged, AI-asset ready */}
         <div className="absolute bottom-0 right-0 top-0 flex items-end justify-end pr-2">
-          {/* Phase 5: replace src with archetype-specific generated image */}
           <img
             src={CHARACTERS[mockProfile.characterId].src}
-            alt={mockPrimaryArchetype.name_ko}
+            alt={archetype.name_ko}
             className="object-contain object-bottom"
             style={{ height: "192px", width: "auto", maxWidth: "160px" }}
             draggable={false}
@@ -86,13 +86,12 @@ export default function ReportScreen() {
         </div>
       </div>
 
-      {/* ── EVOLUTION TIMELINE — open by default, enlarged cards ── */}
+      {/* EVOLUTION TIMELINE — open by default */}
       <div className="px-5 mb-4">
         <p className="text-xs font-semibold text-secondary mb-3">나의 변화 히스토리</p>
         <div className="no-scrollbar flex items-start gap-3 overflow-x-auto pb-1">
           {mockEvolutionHistory.map((e, i) => (
             <div key={e.id} className="flex items-center gap-3 shrink-0">
-              {/* ArchetypeCard — enlarged to md size for visual weight */}
               <ArchetypeCard
                 src={CHARACTERS[e.characterId].src}
                 name={e.archetypeName}
@@ -104,12 +103,12 @@ export default function ReportScreen() {
               )}
             </div>
           ))}
-          {/* current archetype — highlighted */}
+          {/* current — highlighted with live archetype name */}
           <div className="flex items-center gap-3 shrink-0">
             <span className="text-tertiary text-base shrink-0 mt-[-20px]">→</span>
             <ArchetypeCard
               src={CHARACTERS[mockProfile.characterId].src}
-              name={mockPrimaryArchetype.name_ko}
+              name={archetype.name_ko}
               active
               size="md"
             />
@@ -132,7 +131,7 @@ export default function ReportScreen() {
         </div>
       </div>
 
-      {/* change-stat cards — below evolution */}
+      {/* change-stat cards */}
       <div className="px-5 mb-4">
         <p className="text-xs font-semibold text-secondary mb-2">이번 주 변화</p>
         <div className="grid grid-cols-2 gap-2">
