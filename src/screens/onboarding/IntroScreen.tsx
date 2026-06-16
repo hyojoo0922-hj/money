@@ -1,6 +1,7 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { MingGuide } from "@/components/ming/MingGuide";
-import type { MingKey } from "@/lib/assets";
+import type { MingKey, CharacterId } from "@/lib/assets";
+import { completeOnboarding } from "@/lib/supabase";
 
 const points: { e: MingKey; t: string; d: string }[] = [
   { e: "chat",          t: "매일 상황카드에 답해", d: "12개의 카드가 너의 성향을 그려가." },
@@ -11,6 +12,13 @@ const points: { e: MingKey; t: string; d: string }[] = [
 
 export default function IntroScreen() {
   const nav = useNavigate();
+  const { state } = useLocation() as { state?: { characterId?: CharacterId } };
+
+  const finish = async () => {
+    await completeOnboarding(state?.characterId);
+    nav("/");
+  };
+
   return (
     <div className="flex min-h-[100dvh] flex-col bg-bg px-6 pb-8 pt-12">
       <div className="mx-auto w-full max-w-[480px]">
@@ -30,7 +38,7 @@ export default function IntroScreen() {
             </div>
           ))}
         </div>
-        <button onClick={() => nav("/")}
+        <button onClick={finish}
           className="mt-8 w-full rounded-full bg-grad-cta py-4 text-base font-bold text-white shadow-glow-cta transition active:scale-[0.97]">
           MINGLEY 시작하기
         </button>

@@ -14,6 +14,7 @@ import CoreQuestionsScreen from "@/screens/onboarding/CoreQuestionsScreen";
 import RecommendScreen from "@/screens/onboarding/RecommendScreen";
 import SelectScreen from "@/screens/onboarding/SelectScreen";
 import IntroScreen from "@/screens/onboarding/IntroScreen";
+import { isOnboardingComplete } from "@/lib/supabase";
 
 /**
  * Navigation IA (visual reference confirmed):
@@ -36,7 +37,10 @@ export default function App() {
 
       {/* Main app shell — 5-tab dark nav */}
       <Route element={<AppShell />}>
-        <Route path="/"              element={<HomeScreen />} />
+        <Route
+          path="/"
+          element={isOnboardingComplete() ? <HomeScreen /> : <Navigate to="/splash" replace />}
+        />
         <Route path="/situations"    element={<SituationsScreen />} />
         <Route path="/relationships" element={<RelationshipsScreen />} />
         <Route path="/relationships/:id" element={<RelationshipDetailScreen />} />

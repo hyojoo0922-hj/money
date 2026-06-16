@@ -1,4 +1,61 @@
 import { createClient } from "@supabase/supabase-js";
+import { CHARACTERS, type CharacterId } from "@/lib/assets";
+
+/** localStorage key gating app entry: "1" once onboarding is finished. */
+export const ONBOARDING_FLAG = "mingley_onboarding_complete";
+
+/** True once the user has completed onboarding on this device. */
+export const isOnboardingComplete = (): boolean => {
+  try {
+    return localStorage.getItem(ONBOARDING_FLAG) === "1";
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * completeOnboarding — finalize the onboarding flow (fire-and-forget).
+ *
+ * 1. If a valid characterId is given and Supabase is available + authed,
+ *    persist it to profiles.character_id for the current user.
+ * 2. Always set the local completion flag so the entry gate routes to Home.
+ *
+ * Never throws: missing client / no session / bad characterId all degrade
+ * gracefully — the flag is still set so the user is not trapped in onboarding.
+ */
+export async function completeOnboarding(characterId?: string): Promise<void> {
+  try {
+    const valid =
+      characterId && (characterId in CHARACTERS)
+        ? (characterId as CharacterId)
+        : null;
+
+    if (valid && supabase) {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const userId = session?.user?.id ?? null;
+
+      if (userId) {
+        const { error } = await supabase
+          .from("profiles")
+          .update({ character_id: valid })
+          .eq("user_id", userId);
+        if (error) {
+          console.warn("[MINGLEY] character_id update failed:", error.message);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("[MINGLEY] completeOnboarding error:", err);
+  } finally {
+    try {
+      localStorage.setItem(ONBOARDING_FLAG, "1");
+    } catch {
+      /* localStorage unavailable — non-fatal */
+    }
+  }
+}
 
 const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
