@@ -22,6 +22,8 @@ interface UseArchetypeImageResult {
   ticketsRemaining:  number;
   triggerGeneration: () => Promise<void>;
   errorMessage:      string | null;
+  /** Identity-lock: persisted base character resolved from profiles.character_id. */
+  activeCharacterId: CharacterId;
 }
 
 export function useArchetypeImage(
@@ -175,6 +177,6 @@ export function useArchetypeImage(
     }
   }
 
-  return { src, status, ticketsRemaining, triggerGeneration, errorMessage };
+  return { src, status, ticketsRemaining, triggerGeneration, errorMessage, activeCharacterId };
 }
 

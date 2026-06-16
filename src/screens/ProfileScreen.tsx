@@ -1,15 +1,46 @@
-import { useState } from "react";
-import { CHARACTERS } from "@/lib/assets";
+import { useState, useEffect } from "react";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Badge } from "@/components/ui/Badge";
 import { PremiumLabel } from "@/components/ui/PremiumLock";
 import { Sparkline } from "@/components/ui/Sparkline";
 import { MingGuide } from "@/components/ming/MingGuide";
 import { ArchetypeCard } from "@/components/ui/ArchetypeCard";
-import { mockProfile, mockTopTraits, mockEvolutionHistory } from "@/data/mock";
+import { mockProfile } from "@/data/mock";
+import { supabase } from "@/lib/supabase";
 import { usePersonalityScores } from "@/hooks/usePersonalityScores";
 import { useArchetypeImage } from "@/hooks/useArchetypeImage";
 import { cn } from "@/lib/cn";
+
+/**
+ * Identity-lock (Task C-1): the user's base character identity is anchored to
+ * profiles.character_id (resolved by useArchetypeImage as activeCharacterId).
+ * History is filtered to that persisted base character so the evolution stays on
+ * one identity line and never mixes in another character's generations.
+ */
+
+// Archetype key → display name (MVP archetypes; mirrors archetypeEngine).
+const ARCHETYPE_NAMES: Record<string, string> = {
+  reply_overthinker:           "답장망상가",
+  human_excel:                 "인간엑셀",
+  emotion_locomotive:          "감정폭주기관차",
+  relationship_weather_caster: "관계기상캐스터",
+};
+
+interface HistoryRow {
+  id:   string;
+  src:  string;
+  name: string;
+  date: string;
+}
+
+function formatGenDate(iso: string | null): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const m   = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}.${m}.${day}`;
+}
 
 const DNA_TRAITS = [
   { emoji: "♥", label: "공감력", value: 92, color: "bg-pink",   text: "text-pink"   },
@@ -49,14 +80,59 @@ export default function ProfileScreen() {
   const [mingExpanded, setMingExpanded] = useState(false);
   // Live archetype — falls back to 답장망상가 if Supabase unavailable
   const { archetype } = usePersonalityScores();
-  // Evolved character image — falls back to base character if not generated yet
+  // Evolved character image + identity-lock base character (activeCharacterId).
+  // activeCharacterId is resolved from profiles.character_id — the source of truth.
   const {
     src: evolutionSrc,
     status: genStatus,
     ticketsRemaining,
     triggerGeneration,
     errorMessage,
+    activeCharacterId,
   } = useArchetypeImage(mockProfile.characterId, archetype.key);
+
+  // Real evolution history — ready generations for the persisted base character,
+  // newest first. null = loading, [] = none yet. (Task B)
+  const [history, setHistory] = useState<HistoryRow[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadHistory() {
+      if (!supabase) { setHistory([]); return; }
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) { if (!cancelled) setHistory([]); return; }
+
+        const { data, error } = await supabase
+          .from("evolution_generations")
+          .select("id, image_url, archetype_key, generated_at")
+          .eq("user_id", user.id)
+          .eq("character_id", activeCharacterId) // identity-lock anchor
+          .eq("status", "ready")
+          .order("generated_at", { ascending: false });
+
+        if (cancelled) return;
+        if (error || !data) { setHistory([]); return; }
+
+        setHistory(
+          data
+            .filter((r) => r.image_url)
+            .map((r) => ({
+              id:   r.id,
+              src:  r.image_url as string,
+              name: ARCHETYPE_NAMES[r.archetype_key] ?? "진화",
+              date: formatGenDate(r.generated_at),
+            })),
+        );
+      } catch {
+        if (!cancelled) setHistory([]);
+      }
+    }
+
+    loadHistory();
+    return () => { cancelled = true; };
+  }, [activeCharacterId]);
 
   return (
     <div className="pb-4">
@@ -128,34 +204,42 @@ export default function ProfileScreen() {
         )}
       </div>
 
-      {/* EVOLUTION HISTORY — open by default, horizontal swipe */}
+      {/* EVOLUTION HISTORY — real ready generations, newest first (Task B) */}
       <div className="px-5 mt-4 mb-4">
-        <p className="text-xs font-semibold text-secondary mb-3">나의 변화 히스토리</p>
-        <div className="no-scrollbar flex items-start gap-3 overflow-x-auto pb-1">
-          {mockEvolutionHistory.map((e, i) => (
-            <div key={e.id} className="flex items-center gap-3 shrink-0">
-              <ArchetypeCard
-                src={CHARACTERS[e.characterId].src}
-                name={e.archetypeName}
-                date={e.date}
-                size="lg"
-              />
-              {i < mockEvolutionHistory.length - 1 && (
-                <span className="text-tertiary text-base shrink-0 mt-[-24px]">→</span>
-              )}
-            </div>
-          ))}
-          {/* current — active state with live archetype name */}
-          <div className="flex items-center gap-3 shrink-0">
-            <span className="text-tertiary text-base shrink-0 mt-[-24px]">→</span>
-            <ArchetypeCard
-              src={evolutionSrc}
-              name={archetype.name_ko}
-              active
-              size="lg"
-            />
+        <p className="text-xs font-semibold text-secondary mb-1">나의 변화 히스토리</p>
+        <p className="text-[11px] text-tertiary mb-3">
+          {history && history.length > 0
+            ? "네가 진화해온 기록이야 — 가장 최근 모습이 지금의 너야 ✨"
+            : "첫 모습을 생성하면 여기에 진화 기록이 쌓여 ✨"}
+        </p>
+
+        {history === null ? (
+          <p className="text-xs text-tertiary py-6 text-center">기록을 불러오는 중…</p>
+        ) : history.length === 0 ? (
+          <div className="rounded-xl bg-card border border-border px-4 py-6 text-center">
+            <p className="text-sm font-bold text-primary">아직 진화 기록이 없어</p>
+            <p className="text-xs text-tertiary mt-1">
+              위에서 ‘지금 모습 생성하기’를 누르면 첫 진화가 기록돼.
+            </p>
           </div>
-        </div>
+        ) : (
+          <div className="no-scrollbar flex items-start gap-3 overflow-x-auto pb-1">
+            {history.map((h, i) => (
+              <div key={h.id} className="flex items-center gap-3 shrink-0">
+                <ArchetypeCard
+                  src={h.src}
+                  name={h.name}
+                  date={h.date}
+                  active={i === 0}
+                  size="lg"
+                />
+                {i < history.length - 1 && (
+                  <span className="text-tertiary text-base shrink-0 mt-[-24px]">→</span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* level / EXP / keywords */}
