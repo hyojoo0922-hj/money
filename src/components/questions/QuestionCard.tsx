@@ -2,6 +2,7 @@ import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { applyTraitEffects, type WeightType } from "@/lib/personalityEngine";
 import { supabase } from "@/lib/supabase";
+import { fetchScoresForUser } from "@/hooks/usePersonalityScores";
 import type { DailyQuestionCard } from "@/data/mock";
 
 const OPTION_EMOJIS = ["😌", "😐", "🟦", "🔥"];
@@ -60,21 +61,28 @@ export function QuestionCard({ card, onAnswered }: Props) {
 
     // ── Get trait_effects for this option ──────────────────────────────
     // Phase 3-2: replace with Supabase query on question_options
+    // Cards without a mapping (e.g. q3) resolve to {} → no score effect.
     const traitEffects = MOCK_TRAIT_EFFECTS[card.id]?.[optionIndex] ?? {};
 
-    // ── Delegate ALL math to the engine — no score logic here ──────────
-    const { updatedScores, deltas } = applyTraitEffects(
-      {},               // Phase 3-2: pass live scores from Supabase
-      traitEffects,
-      card.weightType,
-    );
-
     // ── Persist if Supabase is available ───────────────────────────────
+    let persisted = true;
+
     if (supabase) {
       try {
         const { data: { user } } = await supabase.auth.getUser();
 
         if (user) {
+          // Read accumulated scores so trait effects build ON TOP of prior
+          // progress instead of overwriting the baseline 50 each answer.
+          const currentScores = await fetchScoresForUser(user.id);
+
+          // Delegate ALL math to the engine — accumulate, no inline logic.
+          const { updatedScores, deltas } = applyTraitEffects(
+            currentScores,
+            traitEffects,
+            card.weightType,
+          );
+
           // 1. Insert immutable answer
           const { data: answerRow, error: answerErr } = await supabase
             .from("answers")
@@ -91,7 +99,9 @@ export function QuestionCard({ card, onAnswered }: Props) {
 
           if (answerErr) throw answerErr;
 
-          // 2. Upsert personality_scores for each affected trait
+          // 2. Upsert personality_scores for each affected trait.
+          //    Cards with no trait mapping (q3) produce no upserts — score
+          //    state is left untouched, but the answer row is still recorded.
           const scoreUpserts = Object.entries(updatedScores).map(
             ([trait_key, score]) => ({
               user_id:         user.id,
@@ -125,15 +135,25 @@ export function QuestionCard({ card, onAnswered }: Props) {
             if (logErr) throw logErr;
           }
         }
-      } catch {
-        // Non-fatal: local state already updated, feedback still shows
+      } catch (err) {
+        // Surface the failure instead of swallowing it; suppress fake success.
+        console.error("[QuestionCard] failed to persist answer/scores:", err);
+        persisted = false;
       }
     }
 
-    setFeedback("success");
+    // Only show the success affirmation when persistence actually succeeded
+    // (or when Supabase is intentionally not configured).
+    if (persisted) {
+      setFeedback("success");
+      setTimeout(() => setFeedback("idle"), 2500);
+      onAnswered?.(card.id);
+    } else {
+      // Allow the user to retry this card.
+      setPicked(null);
+    }
+
     setSubmitting(false);
-    setTimeout(() => setFeedback("idle"), 2500);
-    onAnswered?.(card.id);
   }
 
   return (

@@ -23,6 +23,31 @@ const DEFAULT: ActiveArchetype = {
   margin:  0,
 };
 
+/**
+ * Read the current user's personality_scores from Supabase into a
+ * TraitScoreMap (trait_key → score). Returns {} when Supabase is not
+ * configured, no rows exist, or on error. Shared with QuestionCard so the
+ * answer-submit path applies trait effects on top of accumulated scores.
+ */
+export async function fetchScoresForUser(
+  userId: string,
+): Promise<TraitScoreMap> {
+  if (!supabase) return {};
+
+  const { data, error } = await supabase
+    .from("personality_scores")
+    .select("trait_key, score")
+    .eq("user_id", userId);
+
+  if (error || !data) return {};
+
+  const scoreMap: TraitScoreMap = {};
+  for (const row of data) {
+    scoreMap[row.trait_key] = row.score;
+  }
+  return scoreMap;
+}
+
 interface UsePersonalityScoresResult {
   archetype: ActiveArchetype;
   scores:    TraitScoreMap;
@@ -51,22 +76,14 @@ export function usePersonalityScores(): UsePersonalityScoresResult {
           return;
         }
 
-        const { data, error } = await supabase
-          .from("personality_scores")
-          .select("trait_key, score")
-          .eq("user_id", user.id);
+        const scoreMap = await fetchScoresForUser(user.id);
 
-        if (error || !data || data.length === 0) {
+        if (Object.keys(scoreMap).length === 0) {
           setLoading(false);
           return;
         }
 
         if (cancelled) return;
-
-        const scoreMap: TraitScoreMap = {};
-        for (const row of data) {
-          scoreMap[row.trait_key] = row.score;
-        }
 
         const resolved = resolveArchetype(scoreMap);
 
