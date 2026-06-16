@@ -243,3 +243,37 @@ Primary goals:
 3. fix Critical bugs first
 4. continue implementation in small scoped tasks
 5. avoid adding large new systems until MVP is stable
+
+## 11. Character Evolution Identity Lock
+
+MINGLEY is character-evolution based. Every image generation and evolution step MUST preserve the user's fixed base character identity.
+
+### Fixed identity — must be preserved exactly
+
+- base character identity / user-selected base character
+- original archetype / personality direction
+- core facial/character vibe if established
+- main visual species / type / style if selected
+- gender / age context if used
+- key color / style motifs if assigned
+- character name / title if locked
+
+### May be evolved (enhancement only)
+
+- outfit, expression, pose, accessories
+- aura / effects, level details
+- background, title/label refinement, higher-level styling
+
+### Forbidden in evolution
+
+- turning the character into a completely different person
+- ignoring the originally selected character
+- changing the core archetype without explicit logic
+- replacing character identity on every generation
+- creating unrelated random images
+
+### Enforcement rule
+
+- The generation prompt MUST be derived from the user's locked base character identity (base character, archetype, motifs) plus evolution-stage modifiers only.
+- Identity-defining inputs must come from persisted profile/character state, not be re-randomized per request.
+- Every successful generation must be applied to the active profile and recorded in history so identity continuity is auditable.

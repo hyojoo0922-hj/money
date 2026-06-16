@@ -99,6 +99,7 @@ Important known character principles:
 - Users may use points for evolution.
 - Each user may have 3–5 evolution stages over time.
 - Personality labels or relationship titles can update as the user levels up.
+- Evolution preserves the character's fixed base identity (base character, archetype direction, core vibe, species/style, key motifs, locked name/title). Evolution enhances — outfit, expression, pose, accessories, aura, background, level styling — it never replaces the character with a different person.
 
 MINGLEY characters should be expressive, memorable, cute, slightly funny, and shareable.
 

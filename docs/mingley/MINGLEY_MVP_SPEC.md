@@ -61,12 +61,34 @@ Required:
 - Generate or assign user archetype
 - Generate archetype image
 - Save generated image URL
-- Display generated archetype image in the user-facing flow
+- Apply the generated archetype image to the current user's active profile/character state (the image must visibly become the user's current character, not merely exist in storage)
+- Record every successful generation in the image generation history (image/history records)
+- Display generated archetype image in the user-facing flow (home + profile)
 - Do not regenerate unnecessarily if image already exists unless user intentionally requests it
+
+### Character Evolution Identity
+
+MINGLEY is character-evolution based. The user's initially selected/generated character has a FIXED identity that must be preserved across evolutions.
+
+Fixed identity (must NOT change on evolution):
+
+- base character identity and user-selected base character
+- original archetype / personality direction
+- core facial/character vibe, main visual species/type/style
+- gender/age context, key color/style motifs
+- character name/title once locked
+
+May change on evolution (enhancement only):
+
+- outfit, expression, pose, accessories, aura/effects
+- level details, background, title/label refinement, higher-level styling
+
+Evolution upgrades the existing character; it must never replace it with a different person or produce unrelated random images.
 
 Current status:
 
 - Archetype image generation now succeeds after Edge Function redeploy.
+- Gap: the generated image is not yet applied to the active profile and not shown in history — the core loop is incomplete.
 
 ### Home
 
