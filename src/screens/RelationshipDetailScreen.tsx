@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 import { PremiumLabel } from "@/components/ui/PremiumLock";
 import { MingGuide } from "@/components/ming/MingGuide";
 import { mockRelationships, mockProfile, mockPrimaryArchetype } from "@/data/mock";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { cn } from "@/lib/cn";
 
 const METRICS = [
@@ -42,14 +43,41 @@ export default function RelationshipDetailScreen() {
   const { id } = useParams();
   const nav = useNavigate();
   const r = mockRelationships.find((x) => x.id === id);
-  if (!r) return <div className="p-6 text-secondary">관계를 찾을 수 없어.</div>;
+
+  const goBack = () =>
+    window.history.length > 1 ? nav(-1) : nav("/relationships");
+
+  if (!r) {
+    return (
+      <div className="px-5 pb-6">
+        <div className="flex items-center justify-between pt-4 pb-2">
+          <button
+            onClick={goBack}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-card border border-border text-primary text-lg"
+          >‹</button>
+          <p className="font-extrabold text-primary">관계</p>
+          <div className="w-9" />
+        </div>
+        <EmptyState
+          title="이 관계를 찾을 수 없어"
+          hint="관계 추가 기능은 곧 만날 수 있어. 우선 목록에서 다른 관계를 확인해봐."
+        />
+        <button
+          onClick={() => nav("/relationships")}
+          className="mt-2 w-full rounded-full bg-grad-cta py-3.5 text-sm font-bold text-white shadow-glow-pink active:scale-[0.98] transition"
+        >
+          관계 목록으로 돌아가기
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="pb-6">
       {/* nav */}
       <div className="flex items-center justify-between px-5 pt-4 pb-2">
         <button
-          onClick={() => nav(-1)}
+          onClick={goBack}
           className="flex h-9 w-9 items-center justify-center rounded-full bg-card border border-border text-primary text-lg"
         >‹</button>
         <p className="font-extrabold text-primary">{r.name}</p>
