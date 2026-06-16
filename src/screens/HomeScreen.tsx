@@ -5,11 +5,14 @@ import { Badge } from "@/components/ui/Badge";
 import { CHARACTERS } from "@/lib/assets";
 import { mockProfile, mockDailyCards, mockRecommendations } from "@/data/mock";
 import { usePersonalityScores } from "@/hooks/usePersonalityScores";
+import { useArchetypeImage } from "@/hooks/useArchetypeImage";
 
 export default function HomeScreen() {
   const unanswered = mockDailyCards.filter((c) => !c.answered).length;
   // Live archetype — falls back to 답장망상가 if Supabase unavailable
   const { archetype } = usePersonalityScores();
+  // Active character image — most recent ready evolution, else base character
+  const { src: characterSrc } = useArchetypeImage(mockProfile.characterId, archetype.key);
 
   return (
     <div className="pb-4">
@@ -54,7 +57,7 @@ export default function HomeScreen() {
         {/* right: character portrait */}
         <div className="absolute bottom-0 right-0 top-0 flex items-end justify-end pr-2">
           <img
-            src={CHARACTERS[mockProfile.characterId].src}
+            src={characterSrc}
             alt={archetype.name_ko}
             className="object-contain object-bottom"
             style={{ height: "210px", width: "auto", maxWidth: "170px" }}
