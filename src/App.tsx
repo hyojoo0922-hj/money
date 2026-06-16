@@ -17,6 +17,17 @@ import IntroScreen from "@/screens/onboarding/IntroScreen";
 import { isOnboardingComplete } from "@/lib/supabase";
 
 /**
+ * EntryGate — evaluated on every route match (reactive).
+ * Must be a component, NOT an inline ternary in App's element prop:
+ * App is passed as a stable element to <BrowserRouter> and never re-renders,
+ * so an inline isOnboardingComplete() would freeze at first mount and trap the
+ * user in onboarding even after the flag is set.
+ */
+function EntryGate() {
+  return isOnboardingComplete() ? <HomeScreen /> : <Navigate to="/splash" replace />;
+}
+
+/**
  * Navigation IA (visual reference confirmed):
  * 홈 / 상황카드 / 관계 / 리포트 / 마이
  * Recommendations folded into Home ("오늘의 추천 관계" section).
@@ -37,10 +48,7 @@ export default function App() {
 
       {/* Main app shell — 5-tab dark nav */}
       <Route element={<AppShell />}>
-        <Route
-          path="/"
-          element={isOnboardingComplete() ? <HomeScreen /> : <Navigate to="/splash" replace />}
-        />
+        <Route path="/" element={<EntryGate />} />
         <Route path="/situations"    element={<SituationsScreen />} />
         <Route path="/relationships" element={<RelationshipsScreen />} />
         <Route path="/relationships/:id" element={<RelationshipDetailScreen />} />
